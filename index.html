@@ -86,6 +86,21 @@ select.btn{padding-right:10px}
 .kpi .s{font-size:12px;color:var(--muted)}
 .kpi .dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px}
 
+/* period bar */
+.period{display:flex;flex-wrap:wrap;gap:10px 14px;justify-content:space-between;align-items:center;background:rgba(21,25,53,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:16px;padding:10px 12px;position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+.period .seg{overflow-x:auto;max-width:100%}
+.period .seg button{padding:8px 13px;font-size:13px;white-space:nowrap}
+.period .seg button[aria-pressed="true"]{background:linear-gradient(90deg,var(--gold),var(--magenta));color:#1a0f22}
+.pnav{display:flex;align-items:center;gap:8px;min-width:0}
+.pnav>button:not(.btn){border:1px solid var(--line);background:var(--panel2);width:32px;height:32px;border-radius:9px;flex:none}
+.pnav b{font-family:var(--f-display);font-size:14px;font-weight:700;min-width:0;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pnav .btn{padding:7px 12px}
+.cal.year{grid-template-columns:repeat(3,1fr);gap:8px}
+.cal .mo{border-radius:10px;background:var(--panel2);padding:10px;display:grid;gap:4px;min-width:0;border:0;text-align:left;font-size:12px;color:var(--muted)}
+.cal .mo b{font-family:var(--f-num);font-size:13px}
+.cal .mo.cur{outline:1.5px solid var(--gold)}
+.cal button.d{border:0;cursor:pointer;color:inherit;font:inherit}
+.cal .d.sel{box-shadow:inset 0 0 0 1.5px var(--cyan)}
 /* charts */
 .grid2{display:grid;grid-template-columns:1.5fr 1fr;gap:22px}
 .ph{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
@@ -150,6 +165,9 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .res{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:7px}
 .del{border:0;background:transparent;color:var(--muted);padding:4px 8px;border-radius:6px}
 .del:hover{color:var(--loss);background:rgba(255,93,108,.1)}
+.del.edit:hover{color:var(--cyan);background:rgba(63,214,255,.1)}
+tr.editing td{background:rgba(63,214,255,.07)}
+#log.editing{border-color:var(--cyan);box-shadow:0 0 0 1px var(--cyan)}
 .mkt{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
 .note{max-width:220px;overflow:hidden;text-overflow:ellipsis;color:var(--muted)}
 .empty{text-align:center;color:var(--muted);padding:30px 10px}
@@ -241,6 +259,22 @@ footer{color:var(--muted);font-size:12px;text-align:center}
     </div>
   </header>
 
+  <div class="period">
+    <div class="seg" id="periodSeg" role="group" aria-label="Period">
+      <button type="button" data-p="day" aria-pressed="false">Daily</button>
+      <button type="button" data-p="week" aria-pressed="false">Weekly</button>
+      <button type="button" data-p="month" aria-pressed="true">Monthly</button>
+      <button type="button" data-p="year" aria-pressed="false">Yearly</button>
+      <button type="button" data-p="all" aria-pressed="false">All time</button>
+    </div>
+    <div class="pnav">
+      <button type="button" id="pPrev" aria-label="Previous period">‹</button>
+      <b id="periodLabel">This month</b>
+      <button type="button" id="pNext" aria-label="Next period">›</button>
+      <button class="btn ghost" type="button" id="pToday">Today</button>
+    </div>
+  </div>
+
   <div class="install-hint" id="iosHint" hidden>
     <span>To install on iPhone: open this page in <b>Safari</b>, tap <b>Share</b>, then <b>Add to Home Screen</b>.</span>
     <button class="btn ghost" id="iosClose" type="button">Got it</button>
@@ -260,11 +294,14 @@ footer{color:var(--muted);font-size:12px;text-align:center}
         <span>All-time <b class="num" id="allPnl">$0</b></span>
         <span>Today <b class="num" id="todayPnl">$0</b></span>
       </div>
-      <div class="bar" role="progressbar" aria-label="Monthly goal progress" id="goalBar"><i id="goalFill"></i></div>
-      <div class="goal-row">
-        <span><b class="num" id="goalPct">0%</b> of monthly target</span>
-        <label for="goalInput">Target</label><input class="num" id="goalInput" type="number" min="0" step="50">
+      <div id="goalWrap">
+        <div class="bar" role="progressbar" aria-label="Monthly goal progress" id="goalBar"><i id="goalFill"></i></div>
+        <div class="goal-row">
+          <span><b class="num" id="goalPct">0%</b> of monthly target</span>
+          <label for="goalInput">Target</label><input class="num" id="goalInput" type="number" min="0" step="50">
+        </div>
       </div>
+      <div class="goal-row" id="periodSub" hidden style="margin-top:14px"></div>
     </div>
     <div class="panel ring-panel">
       <div class="ring">
@@ -286,8 +323,8 @@ footer{color:var(--muted);font-size:12px;text-align:center}
 
   <section class="kpis">
     <div class="kpi"><span class="label"><i class="dot" style="background:var(--cyan)"></i>Trades</span><span class="v" id="kTrades">0</span><span class="s" id="kDays">0 trading days</span></div>
-    <div class="kpi"><span class="label"><i class="dot" style="background:var(--win)"></i>Best day</span><span class="v up" id="kBest">–</span><span class="s" id="kBestD">–</span></div>
-    <div class="kpi"><span class="label"><i class="dot" style="background:var(--loss)"></i>Worst day</span><span class="v down" id="kWorst">–</span><span class="s" id="kWorstD">–</span></div>
+    <div class="kpi"><span class="label"><i class="dot" style="background:var(--win)"></i>Biggest profit day</span><span class="v up" id="kBest">–</span><span class="s" id="kBestD">–</span></div>
+    <div class="kpi"><span class="label"><i class="dot" style="background:var(--loss)"></i>Biggest loss day</span><span class="v down" id="kWorst">–</span><span class="s" id="kWorstD">–</span></div>
     <div class="kpi"><span class="label"><i class="dot" style="background:var(--gold)"></i>Day streak</span><span class="v" id="kStreak">0</span><span class="s" id="kStreakS">green days in a row</span></div>
   </section>
 
@@ -295,14 +332,9 @@ footer{color:var(--muted);font-size:12px;text-align:center}
     <div class="panel">
       <div class="ph">
         <h2>Equity curve</h2>
-        <div class="seg" id="rangeSeg">
-          <button type="button" data-r="30" aria-pressed="false">30D</button>
-          <button type="button" data-r="90" aria-pressed="false">90D</button>
-          <button type="button" data-r="0" aria-pressed="true">All</button>
-        </div>
       </div>
-      <div class="chart-box"><div class="chart-empty" id="eqEmpty" hidden><b>Your equity curve starts here</b><span>Log your first trade below and watch it grow.</span><a class="btn primary" href="#log" style="text-decoration:none">+ Log a trade</a></div><canvas id="eqChart" aria-label="Cumulative profit and loss over time"></canvas></div>
-      <div class="ph" style="margin:18px 0 8px"><h2>Daily P&amp;L</h2></div>
+      <div class="chart-box"><div class="chart-empty" id="eqEmpty" hidden><b id="eqEmptyT">Your equity curve starts here</b><span id="eqEmptyS">Log your first trade below and watch it grow.</span><a class="btn primary" href="#log" style="text-decoration:none">+ Log a trade</a></div><canvas id="eqChart" aria-label="Cumulative profit and loss over time"></canvas></div>
+      <div class="ph" style="margin:18px 0 8px"><h2 id="barTitle">Daily P&amp;L</h2></div>
       <div class="chart-box sm"><canvas id="dayChart" aria-label="Profit or loss per day"></canvas></div>
     </div>
     <div class="panel">
@@ -321,7 +353,7 @@ footer{color:var(--muted);font-size:12px;text-align:center}
   </section>
 
   <section class="panel" id="log">
-    <div class="ph"><h2>Log a trade</h2><span class="hint">Pick the result and P&amp;L is calculated. You can still type your broker's exact figure.</span></div>
+    <div class="ph"><h2 id="formTitle">Log a trade</h2><span class="hint">Pick the result and P&amp;L is calculated. You can still type your broker's exact figure.</span></div>
     <form id="tradeForm" autocomplete="off">
       <div class="f"><label for="fDate">Date</label><input id="fDate" type="date" required></div>
       <div class="f"><label for="fSym">Pair / Symbol</label><input id="fSym" list="symList" placeholder="Type or pick: XAUUSD, BTCUSD, NIFTY" required></div>
@@ -355,14 +387,15 @@ footer{color:var(--muted);font-size:12px;text-align:center}
       </div>
       <div class="form-actions">
         <button class="btn ghost" type="reset">Clear</button>
-        <button class="btn primary" type="submit">Save trade</button>
+        <button class="btn ghost" type="button" id="cancelEdit" hidden>Cancel edit</button>
+        <button class="btn primary" type="submit" id="saveBtn">Save trade</button>
       </div>
     </form>
   </section>
 
   <section class="panel">
     <div class="ph">
-      <h2>Trade history</h2>
+      <h2 id="histTitle">Trade history</h2>
       <div class="seg" id="filterSeg">
         <button type="button" data-f="all" aria-pressed="true">All</button>
         <button type="button" data-f="win" aria-pressed="false">Wins</button>
@@ -461,24 +494,57 @@ function byDay(list){const m={};list.forEach(t=>{m[t.date]=(m[t.date]||0)+t.pnl}
 
 function toast(msg){const el=$('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove('show'),2200)}
 
+/* ---------- period ---------- */
+let period='month',anchor=new Date();
+const pad=n=>String(n).padStart(2,'0');
+const ymd=(y,m,d)=>`${y}-${pad(m+1)}-${pad(d)}`;
+function periodRange(p=period){
+  const a=new Date(anchor.getFullYear(),anchor.getMonth(),anchor.getDate());
+  if(p==='day'){const k=iso(a);return {from:k,to:k,label:a.toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short',year:'numeric'}),word:'this day'}}
+  if(p==='week'){const st=new Date(a);st.setDate(a.getDate()-((a.getDay()+6)%7));const en=new Date(st);en.setDate(st.getDate()+6);
+    return {from:iso(st),to:iso(en),label:st.toLocaleDateString(undefined,{day:'numeric',month:'short'})+' – '+en.toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'}),word:'this week'}}
+  if(p==='month'){const y=a.getFullYear(),m=a.getMonth();return {from:ymd(y,m,1),to:ymd(y,m,new Date(y,m+1,0).getDate()),label:a.toLocaleDateString(undefined,{month:'long',year:'numeric'}),word:'this month'}}
+  if(p==='year'){const y=a.getFullYear();return {from:y+'-01-01',to:y+'-12-31',label:String(y),word:'this year'}}
+  return {from:'0000-01-01',to:'9999-12-31',label:'All time',word:'so far'};
+}
+function inPeriod(){const r=periodRange();return trades.filter(t=>t.date>=r.from&&t.date<=r.to)}
+function syncCal(){calMonth=new Date(anchor.getFullYear(),anchor.getMonth(),1)}
+function shiftPeriod(n){
+  if(period==='day')anchor.setDate(anchor.getDate()+n);
+  else if(period==='week')anchor.setDate(anchor.getDate()+7*n);
+  else if(period==='month'){anchor.setDate(1);anchor.setMonth(anchor.getMonth()+n)}
+  else if(period==='year')anchor.setFullYear(anchor.getFullYear()+n);
+  syncCal();renderAll();
+}
+function setPeriod(p,date){period=p;if(date)anchor=new Date(date+'T00:00:00');
+  [...$('periodSeg').children].forEach(x=>x.setAttribute('aria-pressed',x.dataset.p===p));syncCal();renderAll()}
+function focusDate(d){const r=periodRange();if(d<r.from||d>r.to){anchor=new Date(d+'T00:00:00')}syncCal()}
+
 /* ---------- stats ---------- */
 function renderStats(){
-  const days=byDay(trades);
+  const list=inPeriod(),r=periodRange();
+  $('periodLabel').textContent=r.label;
+  $('pPrev').hidden=$('pNext').hidden=period==='all';
+  const allDays=byDay(trades);
   const all=trades.reduce((a,t)=>a+t.pnl,0);
-  const ym=todayISO.slice(0,7);
-  const month=trades.filter(t=>t.date.startsWith(ym)).reduce((a,t)=>a+t.pnl,0);
-  const today=days[todayISO]||0;
-  $('monthName').textContent=new Date().toLocaleDateString(undefined,{month:'long',year:'numeric'});
-  const mp=$('monthPnl');mp.textContent=money(month);mp.className='big num '+(month>=0?'up':'down');
+  const net=list.reduce((a,t)=>a+t.pnl,0);
+  const today=allDays[todayISO]||0;
+  $('monthName').textContent=r.label;
+  const mp=$('monthPnl');mp.textContent=money(net);mp.className='big num '+(net>=0?'up':'down');
   const ap=$('allPnl');ap.textContent=money(all);ap.className='num '+(all>=0?'up':'down');
   const tp=$('todayPnl');tp.textContent=money(today);tp.className='num '+(today>0?'up':today<0?'down':'');
-  const pct=settings.goal>0?Math.max(0,Math.min(100,month/settings.goal*100)):0;
-  $('goalFill').style.width=pct+'%';$('goalPct').textContent=Math.round(pct)+'%';
-  $('goalBar').setAttribute('aria-valuenow',Math.round(pct));
+  $('goalWrap').hidden=period!=='month';$('periodSub').hidden=period==='month';
+  if(period==='month'){
+    const pct=settings.goal>0?Math.max(0,Math.min(100,net/settings.goal*100)):0;
+    $('goalFill').style.width=pct+'%';$('goalPct').textContent=Math.round(pct)+'%';
+    $('goalBar').setAttribute('aria-valuenow',Math.round(pct));
+  }else{
+    $('periodSub').innerHTML=list.length?`<span>${list.length} trade${list.length===1?'':'s'} ${r.word}</span><span>Gross profit <b class="num up">${money(list.filter(t=>t.pnl>0).reduce((a,t)=>a+t.pnl,0))}</b></span><span>Gross loss <b class="num down">${money(list.filter(t=>t.pnl<0).reduce((a,t)=>a+t.pnl,0))}</b></span>`:`<span>No trades ${r.word === 'so far' ? 'yet' : 'in this period'}.</span>`;
+  }
 
-  const wins=trades.filter(t=>t.pnl>0),losses=trades.filter(t=>t.pnl<0);
+  const wins=list.filter(t=>t.pnl>0),losses=list.filter(t=>t.pnl<0);
   const gw=wins.reduce((a,t)=>a+t.pnl,0),gl=-losses.reduce((a,t)=>a+t.pnl,0);
-  const wr=trades.length?wins.length/trades.length:0;
+  const wr=list.length?wins.length/list.length:0;
   $('winRate').textContent=Math.round(wr*100)+'%';
   $('ringArc').setAttribute('stroke-dashoffset',(339.3*(1-wr)).toFixed(1));
   $('wl').textContent=wins.length+' / '+losses.length;
@@ -486,17 +552,17 @@ function renderStats(){
   $('avgW').textContent=wins.length?money(gw/wins.length):'–';
   $('avgL').textContent=losses.length?money(-gl/losses.length):'–';
 
-  const dk=Object.keys(days).sort();
-  $('kTrades').textContent=trades.length;$('kDays').textContent=dk.length+' trading day'+(dk.length===1?'':'s');
-  if(dk.length){
-    let best=dk[0],worst=dk[0];dk.forEach(k=>{if(days[k]>days[best])best=k;if(days[k]<days[worst])worst=k});
-    $('kBest').textContent=money(days[best]);$('kBestD').textContent=fmtDate(best);
-    $('kWorst').textContent=money(days[worst]);$('kWorstD').textContent=fmtDate(worst);
-    let streak=0;const sign=days[dk[dk.length-1]]>=0;
-    for(let i=dk.length-1;i>=0;i--){if((days[dk[i]]>=0)===sign)streak++;else break}
+  const days=byDay(list),dk=Object.keys(days).sort();
+  $('kTrades').textContent=list.length;$('kDays').textContent=dk.length+' trading day'+(dk.length===1?'':'s')+' · '+r.label;
+  let best=null,worst=null;dk.forEach(k=>{if(days[k]>0&&(best==null||days[k]>days[best]))best=k;if(days[k]<0&&(worst==null||days[k]<days[worst]))worst=k});
+  if(best){$('kBest').textContent=money(days[best]);$('kBestD').textContent=fmtDate(best)}else{$('kBest').textContent='–';$('kBestD').textContent='No winning days '+(period==='all'?'yet':r.word)}
+  if(worst){$('kWorst').textContent=money(days[worst]);$('kWorstD').textContent=fmtDate(worst)}else{$('kWorst').textContent='–';$('kWorstD').textContent='No losing days '+(period==='all'?'yet':r.word)}
+  const ak=Object.keys(allDays).sort();
+  if(ak.length){let streak=0;const sign=allDays[ak[ak.length-1]]>=0;
+    for(let i=ak.length-1;i>=0;i--){if((allDays[ak[i]]>=0)===sign)streak++;else break}
     $('kStreak').textContent=streak;$('kStreak').className='v '+(sign?'up':'down');
-    $('kStreakS').textContent=(sign?'green':'red')+' day'+(streak===1?'':'s')+' in a row';
-  }else{['kBest','kWorst'].forEach(i=>$(i).textContent='–');['kBestD','kWorstD'].forEach(i=>$(i).textContent='No trades yet');$('kStreak').textContent='0'}
+    $('kStreakS').textContent=(sign?'green':'red')+' day'+(streak===1?'':'s')+' in a row (current)';
+  }else{$('kStreak').textContent='0';$('kStreak').className='v';$('kStreakS').textContent='green days in a row'}
 }
 
 /* ---------- charts ---------- */
@@ -510,25 +576,33 @@ function baseOpts(){
     scales:{x:{grid:{display:false},ticks:{color:css('--muted'),maxTicksLimit:7,font:{family:'Manrope',size:11}}},
             y:{grid:{color:'rgba(149,155,204,.12)'},border:{display:false},ticks:{color:css('--muted'),font:{family:'JetBrains Mono',size:10},callback:v=>settings.cur+v}}}};
 }
+function buckets(list){
+  if(period==='day'){const srt=[...list].sort((a,b)=>String(a.created||a.id).localeCompare(String(b.created||b.id)));return srt.map((t,i)=>({label:`#${i+1} ${t.sym}`,v:t.pnl}))}
+  const byM=period==='year'||period==='all';const m={};
+  list.forEach(t=>{const k=byM?t.date.slice(0,7):t.date;m[k]=(m[k]||0)+t.pnl});
+  return Object.keys(m).sort().map(k=>({label:byM?new Date(k+'-01T00:00:00').toLocaleDateString(undefined,period==='all'?{month:'short',year:'2-digit'}:{month:'short'}):fmtDate(k),v:m[k]}));
+}
 function renderCharts(){
   if(!chartsReady())return;
-  const days=byDay(trades);let dk=Object.keys(days).sort();
-  let run=0;const cum=dk.map(k=>run+=days[k]);
-  if(range){const cut=iso(new Date(Date.now()-range*864e5));const idx=dk.findIndex(k=>k>=cut);const from=idx<0?dk.length:idx;dk=dk.slice(from);cum.splice(0,from)}
-  $('eqEmpty').hidden=trades.length>0;
-  const labels=dk.map(fmtDate);
+  const list=inPeriod();const bk=buckets(list);
+  let run=0;const cum=bk.map(b=>run+=b.v);
+  $('eqEmpty').hidden=list.length>0;
+  $('eqEmptyT').textContent=trades.length?'No trades in this period':'Your equity curve starts here';
+  $('eqEmptyS').textContent=trades.length?'Pick another period above, or log a trade.':'Log your first trade below and watch it grow.';
+  $('barTitle').textContent=period==='day'?'P&L per trade':(period==='year'||period==='all')?'Monthly P&L':'Daily P&L';
+  const labels=bk.map(b=>b.label);
   const ctx=$('eqChart').getContext('2d');
   const g=ctx.createLinearGradient(0,0,0,260);g.addColorStop(0,'rgba(63,214,255,.35)');g.addColorStop(1,'rgba(255,95,162,0)');
   const lastUp=(cum[cum.length-1]||0)>=0;
   const eqData={labels,datasets:[{data:cum,borderColor:css('--cyan'),backgroundColor:g,fill:true,tension:.35,borderWidth:2.5,
-    pointRadius:cum.map((_,i)=>i===cum.length-1?5:0),pointBackgroundColor:lastUp?css('--win'):css('--loss'),pointBorderColor:css('--bg'),pointBorderWidth:2}]};
+    pointRadius:cum.map((_,i)=>i===cum.length-1||cum.length<3?5:0),pointBackgroundColor:lastUp?css('--win'):css('--loss'),pointBorderColor:css('--bg'),pointBorderWidth:2}]};
   if(eqC){eqC.data=eqData;eqC.update()}else eqC=new Chart(ctx,{type:'line',data:eqData,options:baseOpts()});
 
-  const vals=dk.map(k=>days[k]);
-  const dd={labels,datasets:[{data:vals,backgroundColor:vals.map(v=>v>=0?css('--win'):css('--loss')),borderRadius:4,maxBarThickness:18}]};
+  const vals=bk.map(b=>b.v);
+  const dd={labels,datasets:[{data:vals,backgroundColor:vals.map(v=>v>=0?css('--win'):css('--loss')),borderRadius:4,maxBarThickness:22}]};
   if(dayC){dayC.data=dd;dayC.update()}else dayC=new Chart($('dayChart'),{type:'bar',data:dd,options:baseOpts()});
 
-  const ps={};trades.forEach(t=>ps[t.sym]=(ps[t.sym]||0)+t.pnl);
+  const ps={};list.forEach(t=>ps[t.sym]=(ps[t.sym]||0)+t.pnl);
   const pk=Object.keys(ps).sort((a,b)=>ps[b]-ps[a]).slice(0,6);
   const pal=[css('--gold'),css('--magenta'),css('--cyan'),'#a78bfa','#fb923c','#34d399'];
   const pd={labels:pk,datasets:[{data:pk.map(k=>ps[k]),backgroundColor:pk.map((k,i)=>ps[k]>=0?pal[i%pal.length]:css('--loss')),borderRadius:5,maxBarThickness:16}]};
@@ -540,38 +614,54 @@ function renderCharts(){
 
 /* ---------- calendar ---------- */
 function renderCal(){
-  const days=byDay(trades);
+  const days=byDay(trades);const r=periodRange();
+  const cal=$('cal');
+  if(period==='year'||period==='all'){
+    const y=calMonth.getFullYear();cal.className='cal year';
+    $('calTitle').textContent='Year '+y;
+    const mm={};trades.forEach(t=>{if(t.date.startsWith(y+'-')){const k=t.date.slice(5,7);mm[k]=(mm[k]||0)+t.pnl}});
+    const max=Math.max(1,...Object.values(mm).map(Math.abs));let g=0,rd=0,h='';
+    for(let m=0;m<12;m++){const k=pad(m+1);const v=mm[k];let st='';
+      if(v!=null){const a=(.18+.55*Math.min(1,Math.abs(v)/max)).toFixed(2);st=v>=0?`background:rgba(47,227,154,${a})`:`background:rgba(255,93,108,${a})`;v>=0?g++:rd++}
+      const cur=todayISO.slice(0,7)===`${y}-${k}`;
+      h+=`<button type="button" class="mo${cur?' cur':''}" style="${st}" data-month="${y}-${k}-01"><span>${new Date(y,m,1).toLocaleDateString(undefined,{month:'short'})}</span><b class="${v==null?'':v>=0?'':''}">${v!=null?money(v):'–'}</b></button>`}
+    cal.innerHTML=h;$('calGreen').textContent=g+' green month'+(g===1?'':'s');$('calRed').textContent=rd+' red month'+(rd===1?'':'s');return;
+  }
+  cal.className='cal';
   const y=calMonth.getFullYear(),m=calMonth.getMonth();
   $('calTitle').textContent=calMonth.toLocaleDateString(undefined,{month:'long',year:'numeric'});
   const first=(new Date(y,m,1).getDay()+6)%7, n=new Date(y,m+1,0).getDate();
   const max=Math.max(1,...Object.values(days).map(Math.abs));
   let h=['Mo','Tu','We','Th','Fr','Sa','Su'].map(d=>`<div class="dow">${d}</div>`).join('');
   for(let i=0;i<first;i++)h+='<div class="d e"></div>';
-  let g=0,r=0;
+  let g=0,rd=0;
   for(let d=1;d<=n;d++){
-    const k=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const k=ymd(y,m,d);
     const v=days[k];let st='';
-    if(v!=null){const a=(.18+.6*Math.min(1,Math.abs(v)/max)).toFixed(2);st=v>=0?`background:rgba(47,227,154,${a})`:`background:rgba(255,93,108,${a})`;v>=0?g++:r++}
-    h+=`<div class="d${k===todayISO?' today':''}" style="${st}" title="${v!=null?money(v):'No trades'}"><span class="n">${d}</span>${v!=null?`<span class="p">${short(v)}</span>`:''}</div>`;
+    if(v!=null){const a=(.18+.6*Math.min(1,Math.abs(v)/max)).toFixed(2);st=v>=0?`background:rgba(47,227,154,${a})`:`background:rgba(255,93,108,${a})`;v>=0?g++:rd++}
+    const sel=(period==='day'||period==='week')&&k>=r.from&&k<=r.to;
+    h+=`<button type="button" class="d${k===todayISO?' today':''}${sel?' sel':''}" data-day="${k}" style="${st}" title="${v!=null?money(v):'No trades'} · tap to view this day"><span class="n">${d}</span>${v!=null?`<span class="p">${short(v)}</span>`:''}</button>`;
   }
-  $('cal').innerHTML=h;$('calGreen').textContent=g+' green day'+(g===1?'':'s');$('calRed').textContent=r+' red day'+(r===1?'':'s');
+  cal.innerHTML=h;$('calGreen').textContent=g+' green day'+(g===1?'':'s');$('calRed').textContent=rd+' red day'+(rd===1?'':'s');
 }
 
 /* ---------- table ---------- */
 let pendingDel=null;
 function renderRows(){
-  let list=[...trades].sort((a,b)=>b.date.localeCompare(a.date)||String(b.created||b.id).localeCompare(String(a.created||a.id)));
+  const r=periodRange();
+  $('histTitle').textContent='Trade history · '+r.label;
+  let list=inPeriod().sort((a,b)=>b.date.localeCompare(a.date)||String(b.created||b.id).localeCompare(String(a.created||a.id)));
   if(filter==='win')list=list.filter(t=>t.pnl>0);if(filter==='loss')list=list.filter(t=>t.pnl<0);
   const f=v=>v==null||v===''?'–':v;
-  if(!list.length){$('rows').innerHTML='<tr><td colspan="12" class="empty">No trades here yet. Log one above to see it in your history.</td></tr>';return}
-  $('rows').innerHTML=list.map(t=>{const r=rr(t);return `<tr>
+  if(!list.length){$('rows').innerHTML=`<tr><td colspan="12" class="empty">${trades.length?'No trades in this period. Pick another period above.':'No trades here yet. Log one above to see it in your history.'}</td></tr>`;return}
+  $('rows').innerHTML=list.map(t=>{const rr_=rr(t);return `<tr${String(editingId)===String(t.id)?' class="editing"':''}>
     <td>${fmtDate(t.date)}</td><td><b>${esc(t.sym)}</b><div class="mkt">${marketOf(t.sym)}</div></td>
     <td><span class="pill ${t.side==='Buy'?'buy':'sell'}">${t.side}</span></td>
     <td class="r num">${t.lot}</td><td class="r num">${f(t.entry)}</td><td class="r num down">${f(t.sl)}</td><td class="r num up">${f(t.tp)}</td><td class="r num">${f(t.exit)}</td>
-    <td class="r num">${r?'1:'+r.toFixed(1):'–'}</td>
+    <td class="r num">${rr_?'1:'+rr_.toFixed(1):'–'}</td>
     <td class="r num ${t.pnl>=0?'up':'down'}"><span class="res" style="background:var(${t.pnl>=0?'--win':'--loss'})"></span>${money(t.pnl)}</td>
     <td class="note" title="${esc(t.note||'')}">${esc(t.note||'')}</td>
-    <td>${pendingDel===t.id?`<span class="confirm">Delete?<button class="del" data-yes="${t.id}" type="button">Yes</button><button class="del" data-no="1" type="button">No</button></span>`:`<button class="del" data-del="${t.id}" type="button" aria-label="Delete trade">✕</button>`}</td></tr>`}).join('');
+    <td>${pendingDel===t.id?`<span class="confirm">Delete?<button class="del" data-yes="${t.id}" type="button">Yes</button><button class="del" data-no="1" type="button">No</button></span>`:`<button class="del edit" data-edit="${t.id}" type="button" aria-label="Edit trade" title="Edit">✎</button><button class="del" data-del="${t.id}" type="button" aria-label="Delete trade" title="Delete">✕</button>`}</td></tr>`}).join('');
 }
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
 
@@ -635,10 +725,12 @@ $('fCs').addEventListener('input',()=>{csManual=true;calc()});
 $('fPnl').addEventListener('input',()=>{pnlManual=$('fPnl').value!=='';$('autoTag').textContent=pnlManual?'Manual · tap for auto':'Auto';$('autoTag').classList.toggle('off',pnlManual);calc()});
 $('autoTag').addEventListener('click',e=>{e.preventDefault();pnlManual=false;$('autoTag').textContent='Auto';$('autoTag').classList.remove('off');calc()});
 $('outPick').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;outcome=b.dataset.v;[...$('outPick').children].forEach(x=>x.setAttribute('aria-pressed',x===b));if(outcome==='manual'){$('fExit').value='';$('fExit').focus()}calc()});
+$('tradeForm').addEventListener('reset',()=>{if(editingId!=null){setTimeout(endEdit);}},true);
 $('tradeForm').addEventListener('reset',()=>setTimeout(()=>{$('fDate').value=todayISO;pnlManual=false;csManual=false;$('autoTag').textContent='Auto';$('autoTag').classList.remove('off');calc()}));
 $('tradeForm').addEventListener('submit',async e=>{
   e.preventDefault();
   const sbtn=$('tradeForm').querySelector('[type=submit]');
+  if(editingId!=null)return updateTrade();
   let t={id:Date.now().toString(36),date:$('fDate').value,sym:$('fSym').value.trim().toUpperCase(),side,lot:num('fLot'),
     entry:num('fEntry'),sl:num('fSL'),tp:num('fTP'),exit:num('fExit'),pnl:num('fPnl')||0,note:$('fNote').value.trim()};
   if(CLOUD){sbtn.disabled=true;sbtn.textContent='Saving…';
@@ -647,23 +739,66 @@ $('tradeForm').addEventListener('submit',async e=>{
   if(isSample())trades=[];
   trades.push(t);save();
   const keepDate=$('fDate').value;$('tradeForm').reset();setTimeout(()=>{$('fDate').value=keepDate});
-  calMonth=new Date(t.date+'T00:00:00');calMonth.setDate(1);
+  focusDate(t.date);
   renderAll();toast(t.pnl>=0?`Saved. Nice trade, ${money(t.pnl)} 🧲`:`Saved. ${money(t.pnl)} logged. Protect the capital.`);
 });
+
+/* ---------- edit ---------- */
+let editingId=null;
+function setPick(id,v){[...$(id).children].forEach(x=>x.setAttribute('aria-pressed',x.dataset.v===v))}
+function startEdit(id){
+  const t=trades.find(x=>String(x.id)===String(id));if(!t)return;
+  editingId=t.id;
+  $('fDate').value=t.date;$('fSym').value=t.sym;
+  side=t.side;setPick('sidePick',side);
+  const v=x=>x==null?'':x;
+  $('fLot').value=v(t.lot);$('fEntry').value=v(t.entry);$('fSL').value=v(t.sl);$('fTP').value=v(t.tp);$('fNote').value=t.note||'';
+  outcome=(t.exit!=null&&t.tp!=null&&t.exit===t.tp)?'tp':(t.exit!=null&&t.sl!=null&&t.exit===t.sl)?'sl':'manual';
+  setPick('outPick',outcome);$('fExit').value=v(t.exit);
+  csManual=false;pnlManual=false;$('fCs').value=contractOf(t.sym);
+  document.querySelector('label[for="fLot"]').textContent=isIndia(t.sym)?'Quantity':'Lot size';
+  calc();
+  if(Math.abs((num('fPnl')||0)-t.pnl)>0.005){pnlManual=true;$('fPnl').value=t.pnl;$('autoTag').textContent='Manual · tap for auto';$('autoTag').classList.add('off');calc()}
+  $('formTitle').textContent='Edit trade · '+t.sym+' · '+fmtDate(t.date);
+  $('saveBtn').textContent='Update trade';$('cancelEdit').hidden=false;$('log').classList.add('editing');
+  renderRows();$('log').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function endEdit(){
+  editingId=null;$('formTitle').textContent='Log a trade';$('saveBtn').textContent='Save trade';
+  $('cancelEdit').hidden=true;$('log').classList.remove('editing');
+  $('tradeForm').reset();renderRows();
+}
+$('cancelEdit').onclick=endEdit;
+async function updateTrade(){
+  const old=trades.find(x=>String(x.id)===String(editingId));if(!old){endEdit();return}
+  let t=Object.assign({},old,{date:$('fDate').value,sym:$('fSym').value.trim().toUpperCase(),side,lot:num('fLot'),
+    entry:num('fEntry'),sl:num('fSL'),tp:num('fTP'),exit:num('fExit'),pnl:num('fPnl')||0,note:$('fNote').value.trim()});
+  if(CLOUD){const b=$('saveBtn');b.disabled=true;b.textContent='Updating…';
+    try{t=await db.update(t)}catch(err){toast('Could not update. Check your internet and try again.');b.disabled=false;b.textContent='Update trade';return}
+    b.disabled=false}
+  trades=trades.map(x=>String(x.id)===String(old.id)?t:x);save();
+  focusDate(t.date);
+  endEdit();renderAll();toast('Trade updated');
+}
 
 /* ---------- events ---------- */
 $('rows').addEventListener('click',async e=>{
   const b=e.target.closest('button');if(!b)return;
-  if(b.dataset.del){pendingDel=b.dataset.del;renderRows()}
+  if(b.dataset.edit){startEdit(b.dataset.edit)}
+  else if(b.dataset.del){pendingDel=b.dataset.del;renderRows()}
   else if(b.dataset.yes){const id=b.dataset.yes;const t0=trades.find(t=>String(t.id)===id);
     if(CLOUD&&t0&&!t0.sample){try{await db.del(id)}catch(err){toast('Could not delete. Check your internet and try again.');return}}
-    trades=trades.filter(t=>String(t.id)!==id);pendingDel=null;save();renderAll();toast('Trade deleted')}
+    if(String(editingId)===id)endEdit();trades=trades.filter(t=>String(t.id)!==id);pendingDel=null;save();renderAll();toast('Trade deleted')}
   else if(b.dataset.no){pendingDel=null;renderRows()}
 });
 $('filterSeg').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;filter=b.dataset.f;[...$('filterSeg').children].forEach(x=>x.setAttribute('aria-pressed',x===b));renderRows()});
-$('rangeSeg').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;range=+b.dataset.r;[...$('rangeSeg').children].forEach(x=>x.setAttribute('aria-pressed',x===b));renderCharts()});
-$('calPrev').onclick=()=>{calMonth.setMonth(calMonth.getMonth()-1);renderCal()};
-$('calNext').onclick=()=>{calMonth.setMonth(calMonth.getMonth()+1);renderCal()};
+$('periodSeg').addEventListener('click',e=>{const b=e.target.closest('button');if(b)setPeriod(b.dataset.p)});
+$('pPrev').onclick=()=>shiftPeriod(-1);$('pNext').onclick=()=>shiftPeriod(1);
+$('pToday').onclick=()=>{anchor=new Date();syncCal();renderAll()};
+$('cal').addEventListener('click',e=>{const d=e.target.closest('[data-day]');if(d){setPeriod('day',d.dataset.day);return}
+  const mo=e.target.closest('[data-month]');if(mo)setPeriod('month',mo.dataset.month)});
+$('calPrev').onclick=()=>{if(period==='month'||period==='year')return shiftPeriod(-1);if(period==='all'){calMonth.setFullYear(calMonth.getFullYear()-1)}else calMonth.setMonth(calMonth.getMonth()-1);renderCal()};
+$('calNext').onclick=()=>{if(period==='month'||period==='year')return shiftPeriod(1);if(period==='all'){calMonth.setFullYear(calMonth.getFullYear()+1)}else calMonth.setMonth(calMonth.getMonth()+1);renderCal()};
 $('currency').value=settings.cur;
 $('currency').onchange=e=>{settings.cur=e.target.value;saveS();renderAll()};
 $('goalInput').value=settings.goal;
@@ -701,6 +836,7 @@ const db={
   async list(){const {data,error}=await sb.from('trades').select('*').order('trade_date',{ascending:true}).limit(10000);if(error)throw error;return data.map(fromRow)},
   async add(t){const {data,error}=await sb.from('trades').insert(toRow(t)).select().single();if(error)throw error;return fromRow(data)},
   async addMany(ts){let out=[];for(let i=0;i<ts.length;i+=500){const {data,error}=await sb.from('trades').insert(ts.slice(i,i+500).map(toRow)).select();if(error)throw error;out=out.concat(data.map(fromRow))}return out},
+  async update(t){const r=toRow(t);delete r.user_id;const {data,error}=await sb.from('trades').update(r).eq('id',t.id).select().single();if(error)throw error;return fromRow(data)},
   async del(id){const {error}=await sb.from('trades').delete().eq('id',id);if(error)throw error}
 };
 const firstName=n=>(n||'').trim().split(/\s+/)[0];
