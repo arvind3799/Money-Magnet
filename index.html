@@ -121,6 +121,22 @@ select.btn{padding-right:10px}
 
 #dashView{display:grid;gap:22px;min-width:0}
 #dashView>*,.fview,.admin,.admin>*{min-width:0}
+/* username */
+.title-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px}
+.uname{border:1px solid rgba(63,214,255,.45);background:rgba(63,214,255,.1);color:var(--cyan);border-radius:99px;padding:4px 12px;font-weight:700;font-size:13px;font-family:var(--f-num)}
+.uname.unset{font-family:var(--f-body);border-style:dashed;color:var(--gold);border-color:rgba(255,201,77,.55);background:rgba(255,201,77,.08);animation:nudge 2.4s ease-in-out infinite}
+@keyframes nudge{0%,100%{box-shadow:0 0 0 0 rgba(255,201,77,0)}50%{box-shadow:0 0 0 6px rgba(255,201,77,.15)}}
+.modal{position:fixed;inset:0;z-index:40;background:rgba(6,8,20,.7);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:grid;place-items:center;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.modal-card{width:100%;max-width:420px;background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:22px;display:grid;gap:12px}
+.modal-card h2{font-size:18px}
+.modal-card .hint{margin:0}
+.uinput{display:flex;align-items:center;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:0 12px}
+.uinput:focus-within{border-color:var(--cyan)}
+.uinput span{color:var(--muted);font-family:var(--f-num);font-size:16px}
+.uinput input{flex:1;min-width:0;background:transparent;border:0;padding:12px 4px;font-family:var(--f-num);font-size:16px;outline:none}
+.ustatus{margin:0;font-size:13px;color:var(--muted)}
+.ustatus.ok{color:var(--win)} .ustatus.bad{color:var(--loss)}
+
 /* tabs */
 .tabs{display:flex;gap:6px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:5px;overflow-x:auto}
 .tabs button{border:0;background:transparent;color:var(--muted);font-weight:700;padding:10px 16px;border-radius:10px;white-space:nowrap;display:flex;align-items:center;gap:8px}
@@ -133,7 +149,11 @@ select.btn{padding-right:10px}
 .fh{font-family:var(--f-display);font-size:13px;margin:10px 0 0;color:var(--muted);font-weight:700}
 .prow{display:flex;align-items:center;gap:10px;padding:8px 6px;border-bottom:1px solid var(--line);min-width:0}
 .prow:last-child{border-bottom:0}
-.pname{flex:1;min-width:0;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pname{flex:1;min-width:0;display:grid;gap:1px}
+.pname b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pname small{font-size:11px;color:var(--muted);font-family:var(--f-num)}
+.myid{display:flex;align-items:center;justify-content:space-between;gap:10px;background:rgba(255,201,77,.08);border:1px dashed rgba(255,201,77,.4);border-radius:12px;padding:10px 12px;font-size:13px}
+.myid b{font-family:var(--f-num);color:var(--gold)}
 .pact{display:flex;gap:6px;align-items:center;flex:none}
 .avatar{width:36px;height:36px;border-radius:50%;flex:none;display:grid;place-items:center;font-weight:800;font-size:13px;color:#10121f;background:hsl(var(--h,200) 80% 68%)}
 .chat{display:flex;flex-direction:column;height:calc(100vh - 140px);min-height:460px;padding:0;overflow:hidden}
@@ -309,18 +329,19 @@ footer{color:var(--muted);font-size:12px;text-align:center}
         <button type="button" data-m="in" aria-pressed="true">Sign in</button>
         <button type="button" data-m="up" aria-pressed="false">Create account</button>
       </div>
-      <form id="authForm" novalidate>
-        <div class="f" id="nameField" hidden><label for="aName">Your name</label><input id="aName" autocomplete="given-name" placeholder="Arvind"></div>
-        <div class="f"><label for="aEmail">Email</label><input id="aEmail" type="email" autocomplete="email" placeholder="you@example.com" required></div>
-        <div class="f"><label for="aPass">Password</label><input id="aPass" type="password" autocomplete="current-password" placeholder="At least 6 characters" required></div>
+      <form id="authForm" method="post" action="#" novalidate>
+        <div class="f" id="nameField" hidden><label for="aName">Your name</label><input id="aName" name="name" autocomplete="name" placeholder="Arvind"></div>
+        <div class="f"><label for="aEmail">Email</label><input id="aEmail" name="email" type="email" autocomplete="username" inputmode="email" autocapitalize="off" spellcheck="false" placeholder="you@example.com" required></div>
+        <div class="f"><label for="aPass">Password</label><input id="aPass" name="password" type="password" autocomplete="current-password" placeholder="At least 6 characters" required></div>
         <div class="auth-msg" id="authMsg" hidden></div>
         <button class="btn primary" type="submit" id="authGo">Sign in</button>
         <button class="linkbtn" type="button" id="forgotBtn">Forgot password?</button>
       </form>
     </div>
-    <form id="resetForm" hidden>
+    <form id="resetForm" method="post" action="#" hidden>
+      <input type="email" name="email" autocomplete="username" id="aResetUser" hidden>
       <h2>Set a new password</h2>
-      <div class="f"><label for="aNewPass">New password</label><input id="aNewPass" type="password" autocomplete="new-password" placeholder="At least 6 characters" required></div>
+      <div class="f"><label for="aNewPass">New password</label><input id="aNewPass" name="new-password" type="password" autocomplete="new-password" placeholder="At least 6 characters" required></div>
       <div class="auth-msg" id="resetMsg" hidden></div>
       <button class="btn primary" type="submit">Save new password</button>
     </form>
@@ -334,7 +355,7 @@ footer{color:var(--muted);font-size:12px;text-align:center}
         <span class="logo-d">$</span>
       </div>
       <div>
-        <h1 id="journeyTitle">Money Magnet</h1>
+        <div class="title-row"><h1 id="journeyTitle">Money Magnet</h1><button type="button" class="uname" id="unameBtn" hidden>Set your username</button></div>
         <p class="tag" id="journeyTag">My trading journey, one day at a time</p>
       </div>
     </div>
@@ -358,7 +379,9 @@ footer{color:var(--muted);font-size:12px;text-align:center}
 
   <section class="fview" id="friendsView" hidden>
     <aside class="panel flist">
-      <div class="f"><label for="fSearch">Find traders</label><input id="fSearch" placeholder="Search by name, e.g. Rahul" autocomplete="off"></div>
+      <div class="myid" id="myId"></div>
+      <div class="f"><label for="fSearch">Find traders</label><input id="fSearch" placeholder="Name or @username" autocomplete="off" autocapitalize="off" spellcheck="false"></div>
+      <p class="hint" style="margin:-4px 0 0">Lots of people with the same name? Search their @username to find exactly them.</p>
       <h3 class="fh" id="fResultsTitle">Traders on Money Magnet</h3>
       <div id="fResults"><p class="hint">Loading…</p></div>
       <h3 class="fh">Friend requests</h3>
@@ -567,6 +590,15 @@ footer{color:var(--muted);font-size:12px;text-align:center}
   </div>
 
   <footer id="footNote">Your data is saved in this browser only. Use “Copy backup” now and then to keep a safe copy.</footer>
+</div>
+<div class="modal" id="unameModal" hidden role="dialog" aria-modal="true" aria-labelledby="unameTitle">
+  <form class="modal-card" id="unameForm" novalidate>
+    <h2 id="unameTitle">Choose your username</h2>
+    <p class="hint">Friends search this to find you, like Instagram. You can change it later.</p>
+    <div class="uinput"><span>@</span><input id="unameInput" maxlength="20" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="arvind.trades"></div>
+    <p class="ustatus" id="unameStatus">3–20 characters: lowercase letters, numbers, . and _</p>
+    <div class="form-actions"><button class="btn ghost" type="button" id="unameCancel">Cancel</button><button class="btn primary" type="submit" id="unameSave" disabled>Save username</button></div>
+  </form>
 </div>
 <div class="toast" id="toast" role="status"></div>
 
@@ -1019,6 +1051,7 @@ function friendly(err){
   return m||'Something went wrong. Try again.';
 }
 function msg(el,text,ok){$(el).textContent=text;$(el).className='auth-msg '+(ok?'ok':'err');$(el).hidden=!text}
+function saveCred(id,password){try{if(window.PasswordCredential&&navigator.credentials){navigator.credentials.store(new PasswordCredential({id,password,name:id})).catch(()=>{})}}catch(e){}}
 let authMode='in';
 function setMode(m){authMode=m;[...$('authTabs').children].forEach(b=>b.setAttribute('aria-pressed',b.dataset.m===m));
   $('nameField').hidden=m!=='up';$('authGo').textContent=m==='up'?'Create my account':'Sign in';
@@ -1036,9 +1069,11 @@ $('authForm').addEventListener('submit',async e=>{
     if(authMode==='up'){
       const {data,error}=await sb.auth.signUp({email,password:pass,options:{data:{name,goal:1000,cur:'$'},emailRedirectTo:location.origin+location.pathname}});
       if(error)throw error;
+      saveCred(email,pass);
       if(!data.session){setMode('in');msg('authMsg','Account created. Check your inbox and tap the confirm link, then sign in here.',true)}
     }else{
       const {error}=await sb.auth.signInWithPassword({email,password:pass});if(error)throw error;
+      saveCred(email,pass);
     }
   }catch(err){msg('authMsg',friendly(err))}
   finally{$('authGo').disabled=false}
@@ -1056,7 +1091,7 @@ $('resetForm').addEventListener('submit',async e=>{
   if(error)return msg('resetMsg',friendly(error));
   toast('Password updated');const {data}=await sb.auth.getUser();if(data.user){uid=null;enter(data.user)}
 });
-$('signOutBtn').onclick=async()=>{if(chan){sb.removeChannel(chan);chan=null}friendships=[];unread={};openFriend=null;showView('dash');$('mainTabs').hidden=true;await sb.auth.signOut();uid=null;trades=[];showAuth();setMode('in')};
+$('signOutBtn').onclick=async()=>{myUsername=null;$('unameBtn').hidden=true;if(chan){sb.removeChannel(chan);chan=null}friendships=[];unread={};openFriend=null;showView('dash');$('mainTabs').hidden=true;await sb.auth.signOut();uid=null;trades=[];showAuth();setMode('in')};
 
 async function enter(user){
   if(uid===user.id)return;uid=user.id;userEmail=user.email||'';
@@ -1110,10 +1145,12 @@ const initials=n=>((n||'').trim().split(/\s+/).slice(0,2).map(w=>w[0]||'').join(
 const hue=id=>{let h=0;for(const c of String(id))h=(h*31+c.charCodeAt(0))%360;return h};
 const av=(id,name)=>`<span class="avatar" style="--h:${hue(id)}" aria-hidden="true">${esc(initials(name))}</span>`;
 const pname=id=>(profiles[id]&&profiles[id].name)||'Trader';
+const tid=id=>'#'+String(id).replace(/-/g,'').slice(0,6).toUpperCase();
+const joinedTxt=id=>profiles[id]&&profiles[id].created_at?' · joined '+new Date(profiles[id].created_at).toLocaleDateString(undefined,{month:'short',year:'numeric'}):'';
 const other=f=>f.requester===uid?f.addressee:f.requester;
 const relation=id=>friendships.find(f=>other(f)===id);
 function setupHint(err){return /relation|does not exist|schema cache|function/i.test((err&&err.message)||'')?'Friends and chat need a one-time setup: run setup-2.sql in Supabase.':'Could not load. Check your internet and try again.'}
-async function fetchProfiles(ids){const need=[...new Set(ids)].filter(i=>!profiles[i]);if(!need.length)return;const {data}=await sb.from('profiles').select('id,name').in('id',need);(data||[]).forEach(p=>profiles[p.id]=p)}
+async function fetchProfiles(ids){const need=[...new Set(ids)].filter(i=>!profiles[i]);if(!need.length)return;const {data}=await sb.from('profiles').select('id,name,username,created_at').in('id',need);(data||[]).forEach(p=>profiles[p.id]=p)}
 async function refreshFriends(){
   const {data,error}=await sb.from('friendships').select('*');if(error)throw error;friendships=data||[];
   await fetchProfiles(friendships.map(other));
@@ -1122,10 +1159,11 @@ async function refreshFriends(){
   updateBadge();
 }
 async function loadFriends(){
+  renderMyId();
   try{await refreshFriends();renderFriends();searchPeople($('fSearch').value.trim())}
   catch(err){const h=`<p class="hint">${setupHint(err)}</p>`;$('fFriends').innerHTML=h;$('fRequests').innerHTML='';$('fResults').innerHTML=''}
 }
-function personRow(id,actions){return `<div class="prow">${av(id,pname(id))}<span class="pname">${esc(pname(id))}</span><span class="pact">${actions}</span></div>`}
+function personRow(id,actions){const u=profiles[id]&&profiles[id].username;return `<div class="prow">${av(id,pname(id))}<span class="pname"><b>${esc(pname(id))}</b><small>${u?'@'+esc(u):'No username yet'}${joinedTxt(id)}</small></span><span class="pact">${actions}</span></div>`}
 function renderFriends(){
   const inc=friendships.filter(f=>f.status==='pending'&&f.addressee===uid);
   const out=friendships.filter(f=>f.status==='pending'&&f.requester===uid);
@@ -1134,15 +1172,17 @@ function renderFriends(){
   $('fFriends').innerHTML=acc.length?acc.map(f=>{const id=other(f),n=unread[id]||0;return personRow(id,`${n?`<span class="badge">${n}</span>`:''}<button class="btn sm" type="button" data-chat="${id}">Chat</button>`)}).join(''):'<p class="hint">No friends yet. Find traders above and send a request.</p>';
 }
 let sT;$('fSearch').addEventListener('input',e=>{clearTimeout(sT);sT=setTimeout(()=>searchPeople(e.target.value.trim()),250)});
+function actFor(id){const r=relation(id);
+  return !r?`<button class="btn sm" type="button" data-add="${id}">Add friend</button>`:r.status==='accepted'?`<button class="btn sm" type="button" data-chat="${id}">Chat</button>`:r.requester===uid?'<span class="hint">Request sent</span>':`<button class="btn sm primary" type="button" data-accept="${r.id}">Accept</button>`}
 async function searchPeople(q){
-  let qy=sb.from('profiles').select('id,name').neq('id',uid).neq('name','').order('created_at',{ascending:false}).limit(25);
-  const clean=q.replace(/[%_,()*\\]/g,'');if(clean)qy=qy.ilike('name',`%${clean}%`);
+  let qy=sb.from('profiles').select('id,name,username,created_at').neq('id',uid).neq('name','').order('created_at',{ascending:false}).limit(25);
+  const handle=q.startsWith('@');const clean=q.replace(/^@/,'').replace(/[%,()*\\]/g,'');
+  if(clean)qy=handle?qy.ilike('username',`${clean}%`):qy.or(`name.ilike.%${clean}%,username.ilike.%${clean}%`);
   const {data,error}=await qy;if(error){$('fResults').innerHTML=`<p class="hint">${setupHint(error)}</p>`;return}
   (data||[]).forEach(p=>profiles[p.id]=p);
-  $('fResultsTitle').textContent=clean?'Search results':'Traders on Money Magnet';
+  $('fResultsTitle').textContent=clean?(handle?'Username matches':'Search results'):'Traders on Money Magnet';
   $('fResults').innerHTML=(data||[]).length?data.map(p=>{const r=relation(p.id);
-    const act=!r?`<button class="btn sm" type="button" data-add="${p.id}">Add friend</button>`:r.status==='accepted'?`<button class="btn sm" type="button" data-chat="${p.id}">Chat</button>`:r.requester===uid?'<span class="hint">Request sent</span>':`<button class="btn sm primary" type="button" data-accept="${r.id}">Accept</button>`;
-    return personRow(p.id,act)}).join(''):`<p class="hint">${clean?'No traders found with that name.':'No other traders yet. Share your link so friends can join.'}</p>`;
+    return personRow(p.id,actFor(p.id))}).join(''):`<p class="hint">${clean?'No traders found with that name.':'No other traders yet. Share your link so friends can join.'}</p>`;
 }
 $('friendsView').addEventListener('click',async e=>{
   const b=e.target.closest('button');if(!b||b.closest('.chat-form'))return;
@@ -1209,10 +1249,61 @@ function startRealtime(){
 }
 async function initSocial(){
   $('mainTabs').hidden=false;
+  loadMe();
   try{const {data}=await sb.from('admins').select('user_id').eq('user_id',uid).maybeSingle();isAdmin=!!data}catch(e){isAdmin=false}
   $('adminTab').hidden=!isAdmin;
   try{await refreshFriends();startRealtime()}catch(e){}
 }
+
+/* ---------- username ---------- */
+let myUsername=null;
+const U_RE=/^[a-z0-9_][a-z0-9._]{1,18}[a-z0-9_]$/;
+function renderMyId(){
+  const b=$('unameBtn');b.hidden=!CLOUD||!uid;
+  b.textContent=myUsername?'@'+myUsername:'Set your username';b.classList.toggle('unset',!myUsername);
+  b.title=myUsername?'Change your username':'Pick a username so friends can find you';
+  if($('myId'))$('myId').innerHTML=myUsername?`<span>Your username</span><b>@${esc(myUsername)}</b>`:`<span>Friends find you faster with a username</span><button class="btn sm primary" type="button" id="myIdSet">Set username</button>`;
+}
+async function loadMe(){
+  try{const {data,error}=await sb.from('profiles').select('username').eq('id',uid).maybeSingle();if(error)throw error;myUsername=data&&data.username||null}catch(e){myUsername=null}
+  renderMyId();
+}
+function openUname(){
+  $('unameModal').hidden=false;const i=$('unameInput');i.value=myUsername||'';checkUname();setTimeout(()=>i.focus(),50);
+}
+function closeUname(){$('unameModal').hidden=true}
+$('unameBtn').onclick=openUname;
+document.addEventListener('click',e=>{if(e.target&&e.target.id==='myIdSet')openUname()});
+$('unameCancel').onclick=closeUname;
+$('unameModal').addEventListener('click',e=>{if(e.target===$('unameModal'))closeUname()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('unameModal').hidden)closeUname()});
+let uT,uSeq=0;
+function ust(t,c){const el=$('unameStatus');el.textContent=t;el.className='ustatus'+(c?' '+c:'')}
+function checkUname(){
+  const i=$('unameInput');const v=i.value.toLowerCase().replace(/[^a-z0-9._]/g,'');if(v!==i.value)i.value=v;
+  $('unameSave').disabled=true;clearTimeout(uT);
+  if(!v)return ust('3–20 characters: lowercase letters, numbers, . and _');
+  if(v===myUsername)return ust('This is your current username.','ok');
+  if(v.length<3)return ust('At least 3 characters.','bad');
+  if(!U_RE.test(v))return ust("Can't start or end with a dot.",'bad');
+  ust('Checking…');const seq=++uSeq;
+  uT=setTimeout(async()=>{
+    const {data,error}=await sb.from('profiles').select('id').eq('username',v).limit(1);
+    if(seq!==uSeq)return;
+    if(error)return ust(/column|username/i.test(error.message)?'Usernames need a one-time setup: run setup-3.sql in Supabase.':'Could not check. Check your internet.','bad');
+    if(data&&data.length&&data[0].id!==uid)return ust('@'+v+' is taken. Try another, like '+v+'_fx or '+v+'.trades','bad');
+    ust('@'+v+' is available','ok');$('unameSave').disabled=false;
+  },350);
+}
+$('unameInput').addEventListener('input',checkUname);
+$('unameForm').addEventListener('submit',async e=>{
+  e.preventDefault();const v=$('unameInput').value;if(!U_RE.test(v))return;
+  $('unameSave').disabled=true;$('unameSave').textContent='Saving…';
+  const {error}=await sb.from('profiles').update({username:v}).eq('id',uid);
+  $('unameSave').textContent='Save username';
+  if(error){ust(/duplicate|unique/i.test(error.message)?'@'+v+' was just taken. Try another.':'Could not save. Check your internet.','bad');return}
+  myUsername=v;if(profiles[uid])profiles[uid].username=v;renderMyId();closeUname();toast('Your username is now @'+v);
+});
 
 /* ---------- admin ---------- */
 async function loadAdmin(){
@@ -1300,4 +1391,5 @@ boot();
 if(!chartsReady())window.addEventListener('load',()=>{if(!$('app').hidden)renderCharts()});
 })();
 </script>
+
 </body></html>
