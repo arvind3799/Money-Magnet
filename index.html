@@ -92,6 +92,8 @@ select.btn{padding-right:10px}
 h2{font-family:var(--f-display);font-size:16px;font-weight:700;margin:0}
 .chart-box{position:relative;height:260px}
 .chart-box.sm{height:180px}
+.chart-empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;color:var(--muted);font-size:13px;z-index:1;background:var(--panel)}
+.chart-empty b{color:var(--fg);font-family:var(--f-display);font-size:15px}
 .seg{display:inline-flex;background:var(--panel2);border-radius:9px;padding:3px}
 .seg button{border:0;background:transparent;padding:5px 10px;border-radius:7px;font-size:12px;color:var(--muted);font-weight:600}
 .seg button[aria-pressed="true"]{background:var(--line);color:var(--fg)}
@@ -120,6 +122,16 @@ form{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px}
 .sidepick button{flex:1;border:1px solid var(--line);background:var(--panel2);border-radius:10px;padding:10px 0;font-weight:700;color:var(--muted)}
 .sidepick button[aria-pressed="true"][data-v="Buy"]{background:rgba(47,227,154,.15);border-color:var(--win);color:var(--win)}
 .sidepick button[aria-pressed="true"][data-v="Sell"]{background:rgba(255,93,108,.15);border-color:var(--loss);color:var(--loss)}
+.outcome button{font-size:12px;padding:10px 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.outcome button[aria-pressed="true"][data-v="tp"]{background:rgba(47,227,154,.15);border-color:var(--win);color:var(--win)}
+.outcome button[aria-pressed="true"][data-v="sl"]{background:rgba(255,93,108,.15);border-color:var(--loss);color:var(--loss)}
+.outcome button[aria-pressed="true"][data-v="manual"]{background:rgba(255,201,77,.13);border-color:var(--gold);color:var(--gold)}
+.auto-tag{font-size:9px;letter-spacing:.08em;background:rgba(63,214,255,.15);color:var(--cyan);border-radius:5px;padding:1px 5px;margin-left:4px;vertical-align:1px}
+.auto-tag.off{background:rgba(255,201,77,.13);color:var(--gold);cursor:pointer}
+.note-f{grid-column:span 5}
+.pnl-line{flex-basis:100%;color:var(--muted)}
+.pnl-line b.up{color:var(--win)} .pnl-line b.down{color:var(--loss)}
+.warn{color:var(--gold)}
 .calc{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:8px 22px;font-size:13px;color:var(--muted);align-items:center}
 .calc b{color:var(--fg);font-family:var(--f-num)}
 .form-actions{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:10px;justify-content:flex-end}
@@ -165,6 +177,7 @@ footer{color:var(--muted);font-size:12px;text-align:center}
   .hero,.grid2{grid-template-columns:1fr}
   .kpis{grid-template-columns:repeat(2,1fr)}
   form{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .note-f{grid-column:span 2}
   .f.wide{grid-column:span 2}
 }
 @media (max-width:440px){
@@ -238,11 +251,6 @@ footer{color:var(--muted);font-size:12px;text-align:center}
     <button class="btn ghost" id="moveBtn" type="button">Move them to my account</button>
   </div>
 
-  <div class="banner" id="sampleBanner" hidden>
-    <span>You're looking at example trades. Log your first real trade and they'll be cleared automatically.</span>
-    <button class="btn ghost" id="clearSample" type="button">Clear examples now</button>
-  </div>
-
   <section class="hero">
     <div class="panel goal">
       <svg class="magnet" viewBox="0 0 24 24" fill="none" stroke="#ffc94d" stroke-width="2.4" stroke-linecap="round"><path d="M6 4v8a6 6 0 0 0 12 0V4"/></svg>
@@ -293,7 +301,7 @@ footer{color:var(--muted);font-size:12px;text-align:center}
           <button type="button" data-r="0" aria-pressed="true">All</button>
         </div>
       </div>
-      <div class="chart-box"><canvas id="eqChart" aria-label="Cumulative profit and loss over time"></canvas></div>
+      <div class="chart-box"><div class="chart-empty" id="eqEmpty" hidden><b>Your equity curve starts here</b><span>Log your first trade below and watch it grow.</span><a class="btn primary" href="#log" style="text-decoration:none">+ Log a trade</a></div><canvas id="eqChart" aria-label="Cumulative profit and loss over time"></canvas></div>
       <div class="ph" style="margin:18px 0 8px"><h2>Daily P&amp;L</h2></div>
       <div class="chart-box sm"><canvas id="dayChart" aria-label="Profit or loss per day"></canvas></div>
     </div>
@@ -313,7 +321,7 @@ footer{color:var(--muted);font-size:12px;text-align:center}
   </section>
 
   <section class="panel" id="log">
-    <div class="ph"><h2>Log a trade</h2><span class="hint">P&amp;L is what your broker shows after closing, including fees.</span></div>
+    <div class="ph"><h2>Log a trade</h2><span class="hint">Pick the result and P&amp;L is calculated. You can still type your broker's exact figure.</span></div>
     <form id="tradeForm" autocomplete="off">
       <div class="f"><label for="fDate">Date</label><input id="fDate" type="date" required></div>
       <div class="f"><label for="fSym">Pair / Symbol</label><input id="fSym" list="symList" placeholder="Type or pick: XAUUSD, BTCUSD, NIFTY" required></div>
@@ -328,13 +336,22 @@ footer{color:var(--muted);font-size:12px;text-align:center}
       <div class="f"><label for="fEntry">Entry price</label><input id="fEntry" type="number" step="any" placeholder="2385.40"></div>
       <div class="f"><label for="fSL">Stop loss (SL)</label><input id="fSL" type="number" step="any" placeholder="2380.00"></div>
       <div class="f"><label for="fTP">Take profit (TP)</label><input id="fTP" type="number" step="any" placeholder="2396.00"></div>
-      <div class="f"><label for="fExit">Exit price</label><input id="fExit" type="number" step="any" placeholder="2394.10"></div>
-      <div class="f"><label for="fPnl">Profit / Loss</label><input id="fPnl" type="number" step="0.01" placeholder="-25.50 for a loss" required></div>
-      <div class="f wide"><label for="fNote">Notes</label><input id="fNote" placeholder="Setup, emotions, lesson learned"></div>
+      <div class="f wide"><label>Result</label>
+        <div class="sidepick outcome" id="outPick">
+          <button type="button" data-v="tp" aria-pressed="true">✓ Profit · TP hit</button>
+          <button type="button" data-v="sl" aria-pressed="false">✕ Loss · SL hit</button>
+          <button type="button" data-v="manual" aria-pressed="false">Closed early</button>
+        </div>
+      </div>
+      <div class="f"><label for="fExit">Exit price</label><input id="fExit" type="number" step="any" placeholder="Fills from TP / SL"></div>
+      <div class="f"><label for="fPnl">Profit / Loss <span class="auto-tag" id="autoTag">Auto</span></label><input id="fPnl" type="number" step="0.01" placeholder="Calculated for you" required></div>
+      <div class="f"><label for="fCs">Contract size</label><input id="fCs" type="number" step="any" min="0" placeholder="100"></div>
+      <div class="f note-f"><label for="fNote">Notes</label><input id="fNote" placeholder="Setup, emotions, lesson learned"></div>
       <div class="calc" id="calcRow">
         <span>Planned risk : reward <b id="cRR">–</b></span>
         <span>SL distance <b id="cSL">–</b></span>
         <span>TP distance <b id="cTP">–</b></span>
+        <span class="pnl-line" id="cPnl"></span>
       </div>
       <div class="form-actions">
         <button class="btn ghost" type="reset">Clear</button>
@@ -427,7 +444,7 @@ const MKT={};Object.entries(SYMBOLS).forEach(([g,l])=>l.split(' ').forEach(x=>{i
 function marketOf(sym){const g=MKT[sym];if(g)return g;if(/USDT?$/.test(sym)&&sym.length<=9)return 'Crypto';return 'Other'}
 $('symList').innerHTML=Object.keys(MKT).map(x=>`<option value="${esc(x)}" label="${MKT[x]}"></option>`).join('');
 let trades=store.get(KEY,null);
-if(!trades){trades=makeSample();}
+trades=(trades||[]).filter(t=>!t.sample);
 let settings=Object.assign({cur:'$',goal:1000},store.get(SKEY,{}));
 let range=0, filter='all', calMonth=new Date(); calMonth.setDate(1);
 let side='Buy';
@@ -446,7 +463,6 @@ function toast(msg){const el=$('toast');el.textContent=msg;el.classList.add('sho
 
 /* ---------- stats ---------- */
 function renderStats(){
-  $('sampleBanner').hidden=!isSample();
   const days=byDay(trades);
   const all=trades.reduce((a,t)=>a+t.pnl,0);
   const ym=todayISO.slice(0,7);
@@ -499,6 +515,7 @@ function renderCharts(){
   const days=byDay(trades);let dk=Object.keys(days).sort();
   let run=0;const cum=dk.map(k=>run+=days[k]);
   if(range){const cut=iso(new Date(Date.now()-range*864e5));const idx=dk.findIndex(k=>k>=cut);const from=idx<0?dk.length:idx;dk=dk.slice(from);cum.splice(0,from)}
+  $('eqEmpty').hidden=trades.length>0;
   const labels=dk.map(fmtDate);
   const ctx=$('eqChart').getContext('2d');
   const g=ctx.createLinearGradient(0,0,0,260);g.addColorStop(0,'rgba(63,214,255,.35)');g.addColorStop(1,'rgba(255,95,162,0)');
@@ -564,15 +581,61 @@ function renderAll(){renderStats();renderCharts();renderCal();renderRows()}
 $('fDate').value=todayISO;
 $('sidePick').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;side=b.dataset.v;[...$('sidePick').children].forEach(x=>x.setAttribute('aria-pressed',x===b));calc()});
 const num=id=>{const v=$(id).value;return v===''?null:parseFloat(v)};
+/* ---------- automatic P&L ---------- */
+let outcome='tp',pnlManual=false,csManual=false;
+const USD_PER={USD:1,EUR:1.08,GBP:1.27,AUD:.65,NZD:.6,CAD:.73,CHF:1.13,JPY:.0067,SGD:.75,HKD:.128};
+function isIndia(sym){return (MKT[sym]||'').startsWith('India')}
+function contractOf(sym){
+  if(/^XAU/.test(sym))return 100; if(sym==='XAGUSD')return 5000; if(/^XP[TD]/.test(sym))return 100;
+  if(sym==='USOIL'||sym==='UKOIL')return 1000; if(sym==='NATGAS')return 10000;
+  if((MKT[sym]||'').startsWith('Forex')||/^[A-Z]{6}$/.test(sym)&&!MKT[sym])return 100000;
+  return 1;
+}
+function unitLabel(sym){if(/^XAU|^XP/.test(sym))return 'oz';if(sym==='XAGUSD')return 'oz';if(/OIL$/.test(sym))return 'barrels';if((MKT[sym]||'').startsWith('Forex'))return 'units';return 'units'}
+// returns {factor, approx} to turn quote-currency P&L into USD
+function fx(sym,exit){
+  if(isIndia(sym)||!(MKT[sym]||'').startsWith('Forex')&&!/^XAUEUR$/.test(sym))return {f:1,approx:false};
+  const base=sym.slice(0,3),quote=sym.slice(3,6);
+  if(quote==='USD')return {f:1,approx:false};
+  if(base==='USD')return {f:exit?1/exit:0,approx:false};
+  return USD_PER[quote]?{f:USD_PER[quote],approx:true}:{f:1,approx:true};
+}
+function onSym(){
+  const sym=$('fSym').value.trim().toUpperCase();
+  if(!csManual)$('fCs').value=sym?contractOf(sym):'';
+  document.querySelector('label[for="fLot"]').textContent=isIndia(sym)?'Quantity':'Lot size';
+  $('fLot').placeholder=isIndia(sym)?'75':'0.10';
+  calc();
+}
 function calc(){
   const e=num('fEntry'),s=num('fSL'),t=num('fTP');
   $('cSL').textContent=e!=null&&s!=null?Math.abs(e-s).toFixed(5).replace(/\.?0+$/,''):'–';
   $('cTP').textContent=e!=null&&t!=null?Math.abs(t-e).toFixed(5).replace(/\.?0+$/,''):'–';
   const r=rr({entry:e,sl:s,tp:t});$('cRR').textContent=r?'1 : '+r.toFixed(2):'–';
   $('cRR').style.color=r?(r>=2?'var(--win)':r>=1?'var(--gold)':'var(--loss)'):'';
+  // exit from result
+  if(outcome==='tp'&&t!=null)$('fExit').value=t;
+  if(outcome==='sl'&&s!=null)$('fExit').value=s;
+  $('fExit').readOnly=outcome!=='manual';
+  const x=num('fExit'),lot=num('fLot'),cs=num('fCs');
+  const sym=$('fSym').value.trim().toUpperCase();
+  const line=$('cPnl');
+  if(e==null||x==null||lot==null||!cs){line.innerHTML=e==null?'':'Fill in lot size and '+(outcome==='manual'?'exit price':outcome==='tp'?'take profit':'stop loss')+' to calculate P&amp;L.';if(!pnlManual)$('fPnl').value='';return}
+  const dir=side==='Buy'?1:-1;const move=(x-e)*dir;const {f,approx}=fx(sym,x);
+  const pnl=Math.round(move*lot*cs*f*100)/100;
+  if(!pnlManual)$('fPnl').value=pnl.toFixed(2);
+  let warn='';
+  if(outcome==='tp'&&pnl<0)warn=' <span class="warn">Your TP is on the losing side for a '+side+'. Check Buy / Sell.</span>';
+  if(outcome==='sl'&&pnl>0)warn=' <span class="warn">Your SL is on the winning side for a '+side+'. Check Buy / Sell.</span>';
+  line.innerHTML=`Auto P&amp;L: ${(move>=0?'+':'')+move.toFixed(5).replace(/\.?0+$/,'')} × ${lot} ${isIndia(sym)?'qty':'lot'} × ${cs.toLocaleString()} ${isIndia(sym)?'':unitLabel(sym)}${f!==1?` × ${f.toFixed(4)}`:''} = <b class="${pnl>=0?'up':'down'}">${approx?'≈ ':''}${money(pnl)}</b>${approx?' (rough rate, type your broker\'s figure for the exact amount)':''}${pnlManual?' · <span class="warn">You typed your own P&amp;L</span>':''}${warn}`;
 }
-['fEntry','fSL','fTP'].forEach(i=>$(i).addEventListener('input',calc));
-$('tradeForm').addEventListener('reset',()=>setTimeout(()=>{$('fDate').value=todayISO;calc()}));
+['fEntry','fSL','fTP','fExit','fLot'].forEach(i=>$(i).addEventListener('input',calc));
+$('fSym').addEventListener('input',onSym);$('fSym').addEventListener('change',onSym);
+$('fCs').addEventListener('input',()=>{csManual=true;calc()});
+$('fPnl').addEventListener('input',()=>{pnlManual=$('fPnl').value!=='';$('autoTag').textContent=pnlManual?'Manual · tap for auto':'Auto';$('autoTag').classList.toggle('off',pnlManual);calc()});
+$('autoTag').addEventListener('click',e=>{e.preventDefault();pnlManual=false;$('autoTag').textContent='Auto';$('autoTag').classList.remove('off');calc()});
+$('outPick').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;outcome=b.dataset.v;[...$('outPick').children].forEach(x=>x.setAttribute('aria-pressed',x===b));if(outcome==='manual'){$('fExit').value='';$('fExit').focus()}calc()});
+$('tradeForm').addEventListener('reset',()=>setTimeout(()=>{$('fDate').value=todayISO;pnlManual=false;csManual=false;$('autoTag').textContent='Auto';$('autoTag').classList.remove('off');calc()}));
 $('tradeForm').addEventListener('submit',async e=>{
   e.preventDefault();
   const sbtn=$('tradeForm').querySelector('[type=submit]');
@@ -601,7 +664,6 @@ $('filterSeg').addEventListener('click',e=>{const b=e.target.closest('button');i
 $('rangeSeg').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;range=+b.dataset.r;[...$('rangeSeg').children].forEach(x=>x.setAttribute('aria-pressed',x===b));renderCharts()});
 $('calPrev').onclick=()=>{calMonth.setMonth(calMonth.getMonth()-1);renderCal()};
 $('calNext').onclick=()=>{calMonth.setMonth(calMonth.getMonth()+1);renderCal()};
-$('clearSample').onclick=()=>{trades=[];save();renderAll();toast('Examples cleared. Your journey starts now.')};
 $('currency').value=settings.cur;
 $('currency').onchange=e=>{settings.cur=e.target.value;saveS();renderAll()};
 $('goalInput').value=settings.goal;
@@ -707,7 +769,7 @@ async function enter(user){
   $('signOutBtn').hidden=false;
   $('footNote').textContent='Your trades are saved to your account, so they show on every phone and computer you sign in on.';
   $('authScreen').hidden=true;$('app').hidden=false;
-  try{const list=await db.list();trades=list.length?list:makeSample()}catch(err){trades=[];toast('Could not load your trades. Check your internet and refresh.')}
+  try{const list=await db.list();trades=list}catch(err){trades=[];toast('Could not load your trades. Check your internet and refresh.')}
   renderAll();
   const local=(store.get(KEY,[])||[]).filter(t=>!t.sample);
   if(local.length){$('moveText').textContent=`You have ${local.length} trade${local.length===1?'':'s'} saved on this device from before you had an account.`;$('moveBanner').hidden=false}
