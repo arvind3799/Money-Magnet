@@ -5,6 +5,6 @@
 // the security rules in setup.sql, which let each person see only their own trades.
 
 window.MM_CONFIG = {
-  SUPABASE_URL: "PASTE_YOUR_PROJECT_URL",
-  SUPABASE_ANON_KEY: "PASTE_YOUR_ANON_PUBLIC_KEY"
+  SUPABASE_URL: "https://hofltjehtjareebnxpdu.supabase.co",
+  SUPABASE_ANON_KEY: "sb_publishable_qVnXHeWsPlwirJzoeECy4A_Ig_VpNB5"
 };
