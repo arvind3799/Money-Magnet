@@ -7,6 +7,11 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Money Magnet">
+<style>
+/* Keep content below the phone clock/notch and above the home bar */
+html{background:#0c0f22;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:#0c0f22;z-index:30}
+</style>
 <title>Money Magnet</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -31,7 +36,7 @@ html{background:var(--bg)}
 body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.5;margin:0;
   background-image:radial-gradient(900px 500px at 85% -10%,rgba(255,95,162,.18),transparent 60%),radial-gradient(800px 500px at -10% 10%,rgba(63,214,255,.14),transparent 60%);
   background-attachment:fixed}
-.wrap{max-width:1180px;margin:0 auto;padding-block:28px 60px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:22px}
+.wrap{grid-template-columns:minmax(0,1fr);max-width:1180px;margin:0 auto;padding-block:28px 60px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:22px}
 .num{font-family:var(--f-num);font-variant-numeric:tabular-nums}
 .up{color:var(--win)} .down{color:var(--loss)}
 button,input,select,textarea{font:inherit;color:inherit}
@@ -114,6 +119,53 @@ select.btn{padding-right:10px}
 .kpi .s{font-size:12px;color:var(--muted)}
 .kpi .dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px}
 
+#dashView{display:grid;gap:22px;min-width:0}
+#dashView>*,.fview,.admin,.admin>*{min-width:0}
+/* tabs */
+.tabs{display:flex;gap:6px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:5px;overflow-x:auto}
+.tabs button{border:0;background:transparent;color:var(--muted);font-weight:700;padding:10px 16px;border-radius:10px;white-space:nowrap;display:flex;align-items:center;gap:8px}
+.tabs button[aria-pressed="true"]{background:var(--line);color:var(--fg)}
+.badge{background:var(--magenta);color:#1a0f22;font-size:11px;font-weight:800;border-radius:99px;padding:1px 7px;min-width:20px;text-align:center}
+.btn.sm{padding:6px 11px;font-size:12px}
+/* friends */
+.fview{display:grid;grid-template-columns:330px minmax(0,1fr);gap:18px;align-items:start}
+.flist{display:grid;gap:10px;max-height:calc(100vh - 140px);overflow:auto}
+.fh{font-family:var(--f-display);font-size:13px;margin:10px 0 0;color:var(--muted);font-weight:700}
+.prow{display:flex;align-items:center;gap:10px;padding:8px 6px;border-bottom:1px solid var(--line);min-width:0}
+.prow:last-child{border-bottom:0}
+.pname{flex:1;min-width:0;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pact{display:flex;gap:6px;align-items:center;flex:none}
+.avatar{width:36px;height:36px;border-radius:50%;flex:none;display:grid;place-items:center;font-weight:800;font-size:13px;color:#10121f;background:hsl(var(--h,200) 80% 68%)}
+.chat{display:flex;flex-direction:column;height:calc(100vh - 140px);min-height:460px;padding:0;overflow:hidden}
+.chat-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;color:var(--muted);padding:20px}
+.chat-empty b{font-family:var(--f-display);color:var(--fg);font-size:16px}
+.chat-head{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--line)}
+.chat-head #chatWho{display:flex;align-items:center;gap:10px;font-weight:700}
+#chatBack{display:none}
+.msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:8px}
+.m{max-width:min(78%,520px);padding:9px 12px 6px;border-radius:16px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:14px;line-height:1.45}
+.m time{display:block;font-size:10px;opacity:.7;margin-top:3px;text-align:right}
+.m.me{align-self:flex-end;background:linear-gradient(135deg,var(--gold),var(--magenta));color:#1a0f22;border-bottom-right-radius:5px}
+.m.them{align-self:flex-start;background:var(--panel2);border:1px solid var(--line);border-bottom-left-radius:5px}
+.chat-form{display:flex;gap:8px;padding:10px;border-top:1px solid var(--line);align-items:flex-end}
+.chat-form textarea{flex:1;min-width:0;resize:none;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:10px 12px;max-height:140px;line-height:1.4}
+.chat-form textarea:focus{border-color:var(--cyan);outline:none}
+/* admin */
+.admin{display:grid;gap:22px}
+.sbars{display:flex;align-items:flex-end;gap:3px;height:150px;padding-top:18px}
+.sbars div{flex:1;min-width:0;background:linear-gradient(to top,var(--cyan),var(--magenta));border-radius:4px 4px 0 0;position:relative;min-height:2px}
+.sbars div.z{background:var(--line)}
+.sbars span{position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-size:10px;font-family:var(--f-num);color:var(--fg)}
+.sbars-axis{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:6px}
+table.adm{min-width:640px}
+@media (max-width:820px){
+  .fview{grid-template-columns:1fr}
+  .flist{max-height:none}
+  .fview .chat{display:none}
+  .fview.chatting .flist{display:none}
+  .fview.chatting .chat{display:flex;height:calc(100vh - 120px)}
+  #chatBack{display:inline-flex}
+}
 /* period bar */
 .period{display:flex;flex-wrap:wrap;gap:10px 14px;justify-content:space-between;align-items:center;background:rgba(21,25,53,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:16px;padding:10px 12px;position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
 .period .seg{overflow-x:auto;max-width:100%}
@@ -231,6 +283,17 @@ footer{color:var(--muted);font-size:12px;text-align:center}
   .mini{width:100%}
   .cal .d .p{font-size:8px}
 }
+@media (max-width:600px){
+  header{gap:12px}
+  .hdr-actions{gap:6px;width:100%}
+  .hdr-actions .btn{padding:8px 11px;font-size:12px}
+  .who{display:none}
+  .tag{font-size:12px}
+  .wrap{gap:16px;padding-block:16px 48px}
+  #dashView{gap:16px}
+  .period{padding:8px}
+  .period .seg button{padding:7px 10px;font-size:12px}
+}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head><body>
@@ -286,6 +349,51 @@ footer{color:var(--muted);font-size:12px;text-align:center}
       <button class="btn" id="signOutBtn" type="button" hidden>Sign out</button>
     </div>
   </header>
+
+  <nav class="tabs" id="mainTabs" hidden>
+    <button type="button" data-v="dash" aria-pressed="true">Dashboard</button>
+    <button type="button" data-v="friends" aria-pressed="false">Friends &amp; chat <span class="badge" id="friendsBadge" hidden>0</span></button>
+    <button type="button" data-v="admin" aria-pressed="false" id="adminTab" hidden>Admin</button>
+  </nav>
+
+  <section class="fview" id="friendsView" hidden>
+    <aside class="panel flist">
+      <div class="f"><label for="fSearch">Find traders</label><input id="fSearch" placeholder="Search by name, e.g. Rahul" autocomplete="off"></div>
+      <h3 class="fh" id="fResultsTitle">Traders on Money Magnet</h3>
+      <div id="fResults"><p class="hint">Loading…</p></div>
+      <h3 class="fh">Friend requests</h3>
+      <div id="fRequests"><p class="hint">Loading…</p></div>
+      <h3 class="fh">Your friends</h3>
+      <div id="fFriends"><p class="hint">Loading…</p></div>
+    </aside>
+    <div class="panel chat">
+      <div class="chat-empty" id="chatEmpty"><b>Talk trades with friends</b><span>Add a friend on the left, then pick them here to share setups and ideas.</span></div>
+      <div class="chat-head" id="chatHead" hidden>
+        <button type="button" class="btn ghost" id="chatBack">‹ Back</button>
+        <span id="chatWho"></span>
+      </div>
+      <div class="msgs" id="msgs"></div>
+      <form class="chat-form" id="chatForm" hidden>
+        <button type="button" class="btn" id="ideaBtn" title="Insert a trade idea template">+ Trade idea</button>
+        <textarea id="chatInput" rows="1" placeholder="Write a message" maxlength="2000"></textarea>
+        <button class="btn primary" type="submit">Send</button>
+      </form>
+    </div>
+  </section>
+
+  <section id="adminView" class="admin" hidden>
+    <div class="kpis" id="adminKpis"></div>
+    <div class="panel">
+      <div class="ph"><h2>Sign-ups · last 30 days</h2><button class="btn ghost" type="button" id="adminRefresh">Refresh</button></div>
+      <div class="sbars" id="signupBars"></div>
+    </div>
+    <div class="panel">
+      <div class="ph"><h2>All members</h2><span class="hint" id="adminCount"></span></div>
+      <div class="tbl"><table class="adm"><thead><tr><th>Name</th><th>Email</th><th>Joined</th><th>Last active</th><th class="r">Trades logged</th></tr></thead><tbody id="adminRows"></tbody></table></div>
+    </div>
+  </section>
+
+  <div id="dashView">
 
   <div class="period">
     <div class="seg" id="periodSeg" role="group" aria-label="Period">
@@ -455,6 +563,8 @@ footer{color:var(--muted);font-size:12px;text-align:center}
     <div class="f full"><textarea id="backupText" rows="6" style="font-family:var(--f-num);font-size:12px"></textarea></div>
     <div class="form-actions" style="margin-top:10px"><button class="btn primary" type="button" id="backupGo">Restore these trades</button></div>
   </section>
+
+  </div>
 
   <footer id="footNote">Your data is saved in this browser only. Use “Copy backup” now and then to keep a safe copy.</footer>
 </div>
@@ -946,7 +1056,7 @@ $('resetForm').addEventListener('submit',async e=>{
   if(error)return msg('resetMsg',friendly(error));
   toast('Password updated');const {data}=await sb.auth.getUser();if(data.user){uid=null;enter(data.user)}
 });
-$('signOutBtn').onclick=async()=>{await sb.auth.signOut();uid=null;trades=[];showAuth();setMode('in')};
+$('signOutBtn').onclick=async()=>{if(chan){sb.removeChannel(chan);chan=null}friendships=[];unread={};openFriend=null;showView('dash');$('mainTabs').hidden=true;await sb.auth.signOut();uid=null;trades=[];showAuth();setMode('in')};
 
 async function enter(user){
   if(uid===user.id)return;uid=user.id;userEmail=user.email||'';
@@ -959,6 +1069,7 @@ async function enter(user){
   $('authScreen').hidden=true;$('app').hidden=false;
   try{const list=await db.list();trades=list}catch(err){trades=[];toast('Could not load your trades. Check your internet and refresh.')}
   renderAll();
+  initSocial();
   const local=(store.get(KEY,[])||[]).filter(t=>!t.sample);
   if(local.length){$('moveText').textContent=`You have ${local.length} trade${local.length===1?'':'s'} saved on this device from before you had an account.`;$('moveBanner').hidden=false}
 }
@@ -980,6 +1091,151 @@ function boot(){
     else if(ev==='SIGNED_OUT'||ev==='INITIAL_SESSION'){if(!uid)showAuth()}
   });
 }
+
+/* ---------- views ---------- */
+let view='dash';
+function showView(v){
+  view=v;$('dashView').hidden=v!=='dash';$('friendsView').hidden=v!=='friends';$('adminView').hidden=v!=='admin';
+  [...$('mainTabs').querySelectorAll('button')].forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===v));
+  if(v==='friends')loadFriends();
+  if(v==='admin')loadAdmin();
+  if(v==='dash')renderCharts();
+  scrollTo({top:0});
+}
+$('mainTabs').addEventListener('click',e=>{const b=e.target.closest('button');if(b)showView(b.dataset.v)});
+
+/* ---------- friends & chat ---------- */
+let profiles={},friendships=[],openFriend=null,unread={},chan=null,isAdmin=false;
+const initials=n=>((n||'').trim().split(/\s+/).slice(0,2).map(w=>w[0]||'').join('')||'?').toUpperCase();
+const hue=id=>{let h=0;for(const c of String(id))h=(h*31+c.charCodeAt(0))%360;return h};
+const av=(id,name)=>`<span class="avatar" style="--h:${hue(id)}" aria-hidden="true">${esc(initials(name))}</span>`;
+const pname=id=>(profiles[id]&&profiles[id].name)||'Trader';
+const other=f=>f.requester===uid?f.addressee:f.requester;
+const relation=id=>friendships.find(f=>other(f)===id);
+function setupHint(err){return /relation|does not exist|schema cache|function/i.test((err&&err.message)||'')?'Friends and chat need a one-time setup: run setup-2.sql in Supabase.':'Could not load. Check your internet and try again.'}
+async function fetchProfiles(ids){const need=[...new Set(ids)].filter(i=>!profiles[i]);if(!need.length)return;const {data}=await sb.from('profiles').select('id,name').in('id',need);(data||[]).forEach(p=>profiles[p.id]=p)}
+async function refreshFriends(){
+  const {data,error}=await sb.from('friendships').select('*');if(error)throw error;friendships=data||[];
+  await fetchProfiles(friendships.map(other));
+  const {data:un}=await sb.from('messages').select('sender').eq('receiver',uid).is('read_at',null);
+  unread={};(un||[]).forEach(m=>unread[m.sender]=(unread[m.sender]||0)+1);
+  updateBadge();
+}
+async function loadFriends(){
+  try{await refreshFriends();renderFriends();searchPeople($('fSearch').value.trim())}
+  catch(err){const h=`<p class="hint">${setupHint(err)}</p>`;$('fFriends').innerHTML=h;$('fRequests').innerHTML='';$('fResults').innerHTML=''}
+}
+function personRow(id,actions){return `<div class="prow">${av(id,pname(id))}<span class="pname">${esc(pname(id))}</span><span class="pact">${actions}</span></div>`}
+function renderFriends(){
+  const inc=friendships.filter(f=>f.status==='pending'&&f.addressee===uid);
+  const out=friendships.filter(f=>f.status==='pending'&&f.requester===uid);
+  const acc=friendships.filter(f=>f.status==='accepted');
+  $('fRequests').innerHTML=(inc.length||out.length)?inc.map(f=>personRow(other(f),`<button class="btn sm primary" type="button" data-accept="${f.id}">Accept</button><button class="btn sm ghost" type="button" data-remove="${f.id}">Decline</button>`)).join('')+out.map(f=>personRow(other(f),`<span class="hint">Sent</span><button class="btn sm ghost" type="button" data-remove="${f.id}">Cancel</button>`)).join(''):'<p class="hint">No requests right now.</p>';
+  $('fFriends').innerHTML=acc.length?acc.map(f=>{const id=other(f),n=unread[id]||0;return personRow(id,`${n?`<span class="badge">${n}</span>`:''}<button class="btn sm" type="button" data-chat="${id}">Chat</button>`)}).join(''):'<p class="hint">No friends yet. Find traders above and send a request.</p>';
+}
+let sT;$('fSearch').addEventListener('input',e=>{clearTimeout(sT);sT=setTimeout(()=>searchPeople(e.target.value.trim()),250)});
+async function searchPeople(q){
+  let qy=sb.from('profiles').select('id,name').neq('id',uid).neq('name','').order('created_at',{ascending:false}).limit(25);
+  const clean=q.replace(/[%_,()*\\]/g,'');if(clean)qy=qy.ilike('name',`%${clean}%`);
+  const {data,error}=await qy;if(error){$('fResults').innerHTML=`<p class="hint">${setupHint(error)}</p>`;return}
+  (data||[]).forEach(p=>profiles[p.id]=p);
+  $('fResultsTitle').textContent=clean?'Search results':'Traders on Money Magnet';
+  $('fResults').innerHTML=(data||[]).length?data.map(p=>{const r=relation(p.id);
+    const act=!r?`<button class="btn sm" type="button" data-add="${p.id}">Add friend</button>`:r.status==='accepted'?`<button class="btn sm" type="button" data-chat="${p.id}">Chat</button>`:r.requester===uid?'<span class="hint">Request sent</span>':`<button class="btn sm primary" type="button" data-accept="${r.id}">Accept</button>`;
+    return personRow(p.id,act)}).join(''):`<p class="hint">${clean?'No traders found with that name.':'No other traders yet. Share your link so friends can join.'}</p>`;
+}
+$('friendsView').addEventListener('click',async e=>{
+  const b=e.target.closest('button');if(!b||b.closest('.chat-form'))return;
+  try{
+    if(b.dataset.add){b.disabled=true;const rev=relation(b.dataset.add);
+      if(rev&&rev.addressee===uid){const {error}=await sb.from('friendships').update({status:'accepted'}).eq('id',rev.id);if(error)throw error;toast('You are now friends')}
+      else{const {error}=await sb.from('friendships').insert({requester:uid,addressee:b.dataset.add});if(error)throw error;toast('Friend request sent')}
+      await loadFriends()}
+    else if(b.dataset.accept){b.disabled=true;const {error}=await sb.from('friendships').update({status:'accepted'}).eq('id',b.dataset.accept);if(error)throw error;toast('You are now friends');await loadFriends()}
+    else if(b.dataset.remove){b.disabled=true;const {error}=await sb.from('friendships').delete().eq('id',b.dataset.remove);if(error)throw error;await loadFriends()}
+    else if(b.dataset.chat){openChat(b.dataset.chat)}
+  }catch(err){toast('That did not work. Check your internet and try again.');b.disabled=false}
+});
+const fmtTime=d=>new Date(d).toLocaleString(undefined,{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+function addMsg(m){
+  const nm=$('noMsg');if(nm)nm.remove();
+  const d=document.createElement('div');d.className='m '+(m.sender===uid?'me':'them');
+  d.innerHTML=`${esc(m.body)}<time>${fmtTime(m.created_at)}</time>`;
+  $('msgs').appendChild(d);$('msgs').scrollTop=$('msgs').scrollHeight;
+}
+async function openChat(id){
+  openFriend=id;$('friendsView').classList.add('chatting');
+  $('chatEmpty').hidden=true;$('chatHead').hidden=false;$('chatForm').hidden=false;
+  $('chatWho').innerHTML=av(id,pname(id))+'<span>'+esc(pname(id))+'</span>';
+  $('msgs').innerHTML='<p class="hint">Loading messages…</p>';
+  const {data,error}=await sb.from('messages').select('*').or(`and(sender.eq.${uid},receiver.eq.${id}),and(sender.eq.${id},receiver.eq.${uid})`).order('created_at',{ascending:true}).limit(500);
+  if(openFriend!==id)return;
+  if(error){$('msgs').innerHTML=`<p class="hint">${setupHint(error)}</p>`;return}
+  $('msgs').innerHTML=data.length?'':'<p class="hint" id="noMsg">No messages yet. Say hi or share a trade idea.</p>';
+  data.forEach(addMsg);markRead(id);$('chatInput').focus();
+}
+$('chatBack').onclick=()=>{openFriend=null;$('friendsView').classList.remove('chatting');$('chatEmpty').hidden=false;$('chatHead').hidden=true;$('chatForm').hidden=true;$('msgs').innerHTML='';renderFriends()};
+async function markRead(id){
+  if(!unread[id])return;unread[id]=0;updateBadge();
+  await sb.from('messages').update({read_at:new Date().toISOString()}).eq('receiver',uid).eq('sender',id).is('read_at',null);
+}
+function grow(){const t=$('chatInput');t.style.height='auto';t.style.height=Math.min(140,t.scrollHeight)+'px'}
+$('chatInput').addEventListener('input',grow);
+$('chatInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing){e.preventDefault();$('chatForm').requestSubmit()}});
+$('ideaBtn').onclick=()=>{const t=$('chatInput');t.value=(t.value?t.value+'\n':'')+'Trade idea\nPair: \nDirection: Buy / Sell\nEntry: \nSL: \nTP: \nReason: ';grow();t.focus()};
+$('chatForm').addEventListener('submit',async e=>{
+  e.preventDefault();const body=$('chatInput').value.trim();if(!body||!openFriend)return;
+  $('chatInput').value='';grow();
+  const {data,error}=await sb.from('messages').insert({sender:uid,receiver:openFriend,body}).select().single();
+  if(error){$('chatInput').value=body;grow();toast(/row-level|policy/i.test(error.message)?'You can only message accepted friends.':'Message not sent. Check your internet.');return}
+  addMsg(data);
+});
+function updateBadge(){
+  const n=Object.values(unread).reduce((a,b)=>a+b,0)+friendships.filter(f=>f.status==='pending'&&f.addressee===uid).length;
+  $('friendsBadge').textContent=n>99?'99+':n;$('friendsBadge').hidden=!n;
+}
+function startRealtime(){
+  if(chan)sb.removeChannel(chan);
+  const quiet=async()=>{try{await refreshFriends();if(view==='friends'){renderFriends();searchPeople($('fSearch').value.trim())}}catch(e){}};
+  chan=sb.channel('mm-'+uid)
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'messages',filter:`receiver=eq.${uid}`},async p=>{
+      const m=p.new;await fetchProfiles([m.sender]);
+      if(view==='friends'&&openFriend===m.sender&&!document.hidden){addMsg(m);unread[m.sender]=1;markRead(m.sender)}
+      else{unread[m.sender]=(unread[m.sender]||0)+1;updateBadge();if(view==='friends')renderFriends();toast('New message from '+pname(m.sender))}
+    })
+    .on('postgres_changes',{event:'*',schema:'public',table:'friendships',filter:`addressee=eq.${uid}`},quiet)
+    .on('postgres_changes',{event:'*',schema:'public',table:'friendships',filter:`requester=eq.${uid}`},quiet)
+    .subscribe();
+}
+async function initSocial(){
+  $('mainTabs').hidden=false;
+  try{const {data}=await sb.from('admins').select('user_id').eq('user_id',uid).maybeSingle();isAdmin=!!data}catch(e){isAdmin=false}
+  $('adminTab').hidden=!isAdmin;
+  try{await refreshFriends();startRealtime()}catch(e){}
+}
+
+/* ---------- admin ---------- */
+async function loadAdmin(){
+  $('adminRows').innerHTML='<tr><td colspan="5" class="empty">Loading members…</td></tr>';
+  const {data,error}=await sb.rpc('admin_overview');
+  if(error){$('adminRows').innerHTML=`<tr><td colspan="5" class="empty">${/Only admins/i.test(error.message)?'This page is only for admins.':setupHint(error)}</td></tr>`;$('adminKpis').innerHTML='';$('signupBars').innerHTML='';return}
+  const now=Date.now(),day=864e5,list=data||[];
+  const joinedToday=list.filter(u=>iso(new Date(u.joined))===todayISO).length;
+  const week=list.filter(u=>now-new Date(u.joined)<7*day).length;
+  const active=list.filter(u=>u.last_sign_in&&now-new Date(u.last_sign_in)<7*day).length;
+  const tr=list.reduce((a,u)=>a+Number(u.trades||0),0);
+  const k=(c,l,v,s)=>`<div class="kpi"><span class="label"><i class="dot" style="background:var(${c})"></i>${l}</span><span class="v">${v}</span><span class="s">${s}</span></div>`;
+  $('adminKpis').innerHTML=k('--cyan','Total members',list.length,'everyone who signed up')+k('--win','Joined today',joinedToday,`${week} in the last 7 days`)+k('--gold','Active this week',active,'signed in within 7 days')+k('--magenta','Trades logged',tr.toLocaleString(),'across all members');
+  const counts=[];for(let i=29;i>=0;i--){const d=iso(new Date(now-i*day));counts.push({d,n:list.filter(u=>iso(new Date(u.joined))===d).length})}
+  const mx=Math.max(1,...counts.map(c=>c.n));
+  $('signupBars').innerHTML=counts.map(c=>`<div class="${c.n?'':'z'}" style="height:${c.n?Math.max(6,c.n/mx*100):2}%" title="${fmtDate(c.d)}: ${c.n} sign-up${c.n===1?'':'s'}">${c.n?`<span>${c.n}</span>`:''}</div>`).join('')+'';
+  $('signupBars').insertAdjacentHTML('afterend','');
+  const ax=$('sbAxis')||(()=>{const d=document.createElement('div');d.id='sbAxis';d.className='sbars-axis';$('signupBars').after(d);return d})();
+  ax.innerHTML=`<span>${fmtDate(counts[0].d)}</span><span>Today</span>`;
+  $('adminCount').textContent=list.length+' member'+(list.length===1?'':'s');
+  $('adminRows').innerHTML=list.length?list.map(u=>`<tr><td><div style="display:flex;align-items:center;gap:10px">${av(u.id,u.name)}<b>${esc(u.name||'No name')}</b></div></td><td>${esc(u.email||'')}</td><td>${new Date(u.joined).toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'})}</td><td>${u.last_sign_in?fmtTime(u.last_sign_in):'Never'}</td><td class="r num">${u.trades}</td></tr>`).join(''):'<tr><td colspan="5" class="empty">No members yet.</td></tr>';
+}
+$('adminRefresh').onclick=loadAdmin;
 
 /* ---------- money background ---------- */
 function makeNote(w){
