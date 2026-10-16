@@ -1,9 +1,17 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0c0f22">
+<link rel="icon" type="image/png" href="icons/favicon-32.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Money Magnet">
 <title>Money Magnet</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=Poppins:wght@700&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 /* Layout: one trader's desk — goal hero up top, KPI strip, equity + calendar side by side, log form, trade history. Deliberately dark-only. */
@@ -33,7 +41,9 @@ button{cursor:pointer}
 header{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px}
 .brand{display:flex;align-items:center;gap:14px}
 .logo{width:48px;height:48px;border-radius:14px;background:conic-gradient(from 200deg,var(--gold),var(--magenta),var(--cyan),var(--gold));display:grid;place-items:center;box-shadow:0 8px 30px rgba(255,95,162,.35)}
-.logo svg{width:28px;height:28px}
+.logo-d{font-family:"Poppins","Arial Black",system-ui,sans-serif;font-weight:700;font-size:30px;line-height:1;color:#fff;text-shadow:0 2px 6px rgba(10,6,20,.55);transform:translateY(1px)}
+.install-hint{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;background:rgba(63,214,255,.08);border:1px solid rgba(63,214,255,.4);color:var(--fg);padding:12px 14px;border-radius:12px;font-size:13px}
+.install-hint b{color:var(--cyan)}
 h1{font-family:var(--f-display);font-weight:800;font-size:clamp(22px,4vw,32px);margin:0;letter-spacing:-.01em;text-wrap:balance;
   background:linear-gradient(90deg,var(--gold),var(--magenta) 55%,var(--cyan));-webkit-background-clip:text;background-clip:text;color:transparent}
 .tag{color:var(--muted);font-size:13px;margin:2px 0 0}
@@ -127,11 +137,27 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .res{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:7px}
 .del{border:0;background:transparent;color:var(--muted);padding:4px 8px;border-radius:6px}
 .del:hover{color:var(--loss);background:rgba(255,93,108,.1)}
+.mkt{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
 .note{max-width:220px;overflow:hidden;text-overflow:ellipsis;color:var(--muted)}
 .empty{text-align:center;color:var(--muted);padding:30px 10px}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(20px);background:var(--panel2);border:1px solid var(--line);padding:10px 16px;border-radius:12px;opacity:0;transition:.25s;pointer-events:none;font-size:13px;z-index:20}
 .toast.show{opacity:1;transform:translateX(-50%)}
 .confirm{display:inline-flex;gap:6px;align-items:center;font-size:12px}
+.auth{min-height:100vh;display:grid;place-items:center;padding-block:32px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.auth-card{width:100%;max-width:420px;background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:28px 24px;display:grid;gap:18px;box-shadow:0 30px 80px rgba(0,0,0,.35)}
+.auth-card .brand{justify-content:center;text-align:left}
+.auth-card h2{font-size:20px;text-align:center}
+.auth-card .sub{color:var(--muted);text-align:center;margin:-10px 0 0;font-size:14px}
+.auth-card form{grid-template-columns:1fr;gap:14px}
+.auth-tabs{display:grid;grid-template-columns:1fr 1fr;background:var(--panel2);border-radius:12px;padding:4px}
+.auth-tabs button{border:0;background:transparent;padding:9px;border-radius:9px;font-weight:700;color:var(--muted)}
+.auth-tabs button[aria-pressed="true"]{background:var(--line);color:var(--fg)}
+.auth-msg{font-size:13px;border-radius:10px;padding:10px 12px}
+.auth-msg.err{background:rgba(255,93,108,.12);color:var(--loss)}
+.auth-msg.ok{background:rgba(47,227,154,.12);color:var(--win)}
+.linkbtn{border:0;background:none;color:var(--cyan);font-size:13px;padding:0;justify-self:center}
+.auth-card .btn.primary{padding:12px;font-size:15px}
+.who{font-size:12px;color:var(--muted)}
 footer{color:var(--muted);font-size:12px;text-align:center}
 
 @media (max-width:900px){
@@ -149,26 +175,67 @@ footer{color:var(--muted);font-size:12px;text-align:center}
 </style>
 </head><body>
 
-<div class="wrap">
+<div class="auth" id="authScreen" hidden>
+  <div class="auth-card">
+    <div class="brand">
+      <div class="logo" aria-hidden="true"><span class="logo-d">$</span></div>
+      <div><h1>Money Magnet</h1><p class="tag">Every trader's journey, tracked</p></div>
+    </div>
+    <div id="authMain">
+      <div class="auth-tabs" id="authTabs" style="margin-bottom:16px">
+        <button type="button" data-m="in" aria-pressed="true">Sign in</button>
+        <button type="button" data-m="up" aria-pressed="false">Create account</button>
+      </div>
+      <form id="authForm" novalidate>
+        <div class="f" id="nameField" hidden><label for="aName">Your name</label><input id="aName" autocomplete="given-name" placeholder="Arvind"></div>
+        <div class="f"><label for="aEmail">Email</label><input id="aEmail" type="email" autocomplete="email" placeholder="you@example.com" required></div>
+        <div class="f"><label for="aPass">Password</label><input id="aPass" type="password" autocomplete="current-password" placeholder="At least 6 characters" required></div>
+        <div class="auth-msg" id="authMsg" hidden></div>
+        <button class="btn primary" type="submit" id="authGo">Sign in</button>
+        <button class="linkbtn" type="button" id="forgotBtn">Forgot password?</button>
+      </form>
+    </div>
+    <form id="resetForm" hidden>
+      <h2>Set a new password</h2>
+      <div class="f"><label for="aNewPass">New password</label><input id="aNewPass" type="password" autocomplete="new-password" placeholder="At least 6 characters" required></div>
+      <div class="auth-msg" id="resetMsg" hidden></div>
+      <button class="btn primary" type="submit">Save new password</button>
+    </form>
+  </div>
+</div>
+
+<div class="wrap" id="app">
   <header>
     <div class="brand">
       <div class="logo" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#1a0f22" stroke-width="2.6" stroke-linecap="round"><path d="M6 4v8a6 6 0 0 0 12 0V4"/><path d="M6 4h3M15 4h3"/></svg>
+        <span class="logo-d">$</span>
       </div>
       <div>
-        <h1>Money Magnet</h1>
-        <p class="tag">My trading journey, one day at a time</p>
+        <h1 id="journeyTitle">Money Magnet</h1>
+        <p class="tag" id="journeyTag">My trading journey, one day at a time</p>
       </div>
     </div>
     <div class="hdr-actions">
       <select class="btn" id="currency" aria-label="Currency">
         <option value="$">USD $</option><option value="₹">INR ₹</option><option value="€">EUR €</option><option value="£">GBP £</option>
       </select>
+      <button class="btn" id="installBtn" type="button" hidden>⬇ Install app</button>
       <button class="btn" id="exportBtn" type="button">Copy backup</button>
       <button class="btn" id="importBtn" type="button">Restore backup</button>
       <a class="btn primary" href="#log" style="text-decoration:none">+ Log a trade</a>
+      <button class="btn" id="signOutBtn" type="button" hidden>Sign out</button>
     </div>
   </header>
+
+  <div class="install-hint" id="iosHint" hidden>
+    <span>To install on iPhone: open this page in <b>Safari</b>, tap <b>Share</b>, then <b>Add to Home Screen</b>.</span>
+    <button class="btn ghost" id="iosClose" type="button">Got it</button>
+  </div>
+
+  <div class="banner" id="moveBanner" hidden>
+    <span id="moveText"></span>
+    <button class="btn ghost" id="moveBtn" type="button">Move them to my account</button>
+  </div>
 
   <div class="banner" id="sampleBanner" hidden>
     <span>You're looking at example trades. Log your first real trade and they'll be cleared automatically.</span>
@@ -248,8 +315,8 @@ footer{color:var(--muted);font-size:12px;text-align:center}
     <div class="ph"><h2>Log a trade</h2><span class="hint">P&amp;L is what your broker shows after closing, including fees.</span></div>
     <form id="tradeForm" autocomplete="off">
       <div class="f"><label for="fDate">Date</label><input id="fDate" type="date" required></div>
-      <div class="f"><label for="fSym">Pair / Symbol</label><input id="fSym" list="symList" placeholder="XAUUSD" required></div>
-      <datalist id="symList"><option>XAUUSD</option><option>EURUSD</option><option>GBPUSD</option><option>USDJPY</option><option>BTCUSD</option><option>NAS100</option><option>US30</option><option>NIFTY</option><option>BANKNIFTY</option></datalist>
+      <div class="f"><label for="fSym">Pair / Symbol</label><input id="fSym" list="symList" placeholder="Type or pick: XAUUSD, BTCUSD, NIFTY" required></div>
+      <datalist id="symList"></datalist>
       <div class="f wide"><label>Direction</label>
         <div class="sidepick" id="sidePick">
           <button type="button" data-v="Buy" aria-pressed="true">▲ Buy</button>
@@ -299,14 +366,19 @@ footer{color:var(--muted);font-size:12px;text-align:center}
     <div class="form-actions" style="margin-top:10px"><button class="btn primary" type="button" id="backupGo">Restore these trades</button></div>
   </section>
 
-  <footer>Your data is saved in this browser only. Use “Copy backup” now and then to keep a safe copy.</footer>
+  <footer id="footNote">Your data is saved in this browser only. Use “Copy backup” now and then to keep a safe copy.</footer>
 </div>
 <div class="toast" id="toast" role="status"></div>
 
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script>
 (function(){
 const KEY='mm_trades_v1', SKEY='mm_settings_v1';
 const $=id=>document.getElementById(id);
+const CFG=window.MM_CONFIG||{};
+const CLOUD=!!(CFG.SUPABASE_URL&&CFG.SUPABASE_ANON_KEY&&!/PASTE/.test(CFG.SUPABASE_URL+CFG.SUPABASE_ANON_KEY)&&window.supabase);
+let sb=null,uid=null,userEmail='';
 const store={
   get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},
   set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
@@ -338,13 +410,28 @@ function makeSample(){
   return out;
 }
 
+const SYMBOLS={
+ "Forex · Majors":"EURUSD GBPUSD USDJPY USDCHF AUDUSD USDCAD NZDUSD",
+ "Forex · Crosses":"EURGBP EURJPY EURCHF EURAUD EURCAD EURNZD GBPJPY GBPCHF GBPAUD GBPCAD GBPNZD AUDJPY AUDCHF AUDCAD AUDNZD CADJPY CADCHF CHFJPY NZDJPY NZDCHF NZDCAD",
+ "Forex · Exotics":"USDSGD USDHKD USDZAR USDTRY USDMXN USDNOK USDSEK USDDKK USDPLN USDTHB USDCNH EURTRY EURNOK EURSEK EURPLN GBPZAR",
+ "Metals & Energy":"XAUUSD XAGUSD XPTUSD XPDUSD XAUEUR USOIL UKOIL NATGAS",
+ "Global Indices":"US30 US500 NAS100 US2000 GER40 UK100 FRA40 EU50 JPN225 HK50 AUS200",
+ "Crypto":"BTCUSD ETHUSD BNBUSD SOLUSD XRPUSD ADAUSD DOGEUSD TRXUSD TONUSD AVAXUSD DOTUSD LINKUSD LTCUSD BCHUSD SHIBUSD XLMUSD UNIUSD ATOMUSD NEARUSD APTUSD SUIUSD PEPEUSD ARBUSD OPUSD POLUSD BTCUSDT ETHUSDT SOLUSDT XRPUSDT BNBUSDT DOGEUSDT",
+ "India · Indices":"NIFTY BANKNIFTY FINNIFTY MIDCPNIFTY NIFTYNXT50 SENSEX BANKEX INDIAVIX",
+ "India · Currency":"USDINR EURINR GBPINR JPYINR",
+ "India · MCX":"GOLD GOLDM GOLDPETAL SILVER SILVERM SILVERMIC CRUDEOIL CRUDEOILM NATURALGAS COPPER ZINC ALUMINIUM LEAD",
+ "India · Stocks":"RELIANCE HDFCBANK ICICIBANK INFY TCS SBIN AXISBANK KOTAKBANK LT ITC BHARTIARTL HINDUNILVR BAJFINANCE BAJAJFINSV MARUTI TATAMOTORS TATASTEEL ADANIENT ADANIPORTS SUNPHARMA WIPRO HCLTECH TECHM M&M TITAN ASIANPAINT ULTRACEMCO NTPC POWERGRID ONGC COALINDIA JSWSTEEL HINDALCO INDUSINDBK DRREDDY CIPLA NESTLEIND EICHERMOT HEROMOTOCO BAJAJ-AUTO BPCL GRASIM BRITANNIA APOLLOHOSP TATACONSUM SBILIFE HDFCLIFE DIVISLAB BEL TRENT ETERNAL SHRIRAMFIN JIOFIN IRFC HAL DMART PNB BANKBARODA VEDL TATAPOWER IDEA YESBANK"
+};
+const MKT={};Object.entries(SYMBOLS).forEach(([g,l])=>l.split(' ').forEach(x=>{if(!MKT[x])MKT[x]=g}));
+function marketOf(sym){const g=MKT[sym];if(g)return g;if(/USDT?$/.test(sym)&&sym.length<=9)return 'Crypto';return 'Other'}
+$('symList').innerHTML=Object.keys(MKT).map(x=>`<option value="${esc(x)}" label="${MKT[x]}"></option>`).join('');
 let trades=store.get(KEY,null);
 if(!trades){trades=makeSample();}
 let settings=Object.assign({cur:'$',goal:1000},store.get(SKEY,{}));
 let range=0, filter='all', calMonth=new Date(); calMonth.setDate(1);
 let side='Buy';
-const save=()=>{store.set(KEY,trades)};
-const saveS=()=>store.set(SKEY,settings);
+const save=()=>{if(!CLOUD)store.set(KEY,trades)};
+const saveS=()=>{if(CLOUD&&sb){sb.auth.updateUser({data:{goal:settings.goal,cur:settings.cur}}).catch(()=>{})}else store.set(SKEY,settings)};
 const isSample=()=>trades.length&&trades.every(t=>t.sample);
 
 const money=(v,sign=true)=>{const s=v<0?'-':(sign&&v>0?'+':'');return s+settings.cur+Math.abs(v).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})};
@@ -455,12 +542,12 @@ function renderCal(){
 /* ---------- table ---------- */
 let pendingDel=null;
 function renderRows(){
-  let list=[...trades].sort((a,b)=>b.date.localeCompare(a.date)||String(b.id).localeCompare(String(a.id)));
+  let list=[...trades].sort((a,b)=>b.date.localeCompare(a.date)||String(b.created||b.id).localeCompare(String(a.created||a.id)));
   if(filter==='win')list=list.filter(t=>t.pnl>0);if(filter==='loss')list=list.filter(t=>t.pnl<0);
   const f=v=>v==null||v===''?'–':v;
   if(!list.length){$('rows').innerHTML='<tr><td colspan="12" class="empty">No trades here yet. Log one above to see it in your history.</td></tr>';return}
   $('rows').innerHTML=list.map(t=>{const r=rr(t);return `<tr>
-    <td>${fmtDate(t.date)}</td><td><b>${esc(t.sym)}</b></td>
+    <td>${fmtDate(t.date)}</td><td><b>${esc(t.sym)}</b><div class="mkt">${marketOf(t.sym)}</div></td>
     <td><span class="pill ${t.side==='Buy'?'buy':'sell'}">${t.side}</span></td>
     <td class="r num">${t.lot}</td><td class="r num">${f(t.entry)}</td><td class="r num down">${f(t.sl)}</td><td class="r num up">${f(t.tp)}</td><td class="r num">${f(t.exit)}</td>
     <td class="r num">${r?'1:'+r.toFixed(1):'–'}</td>
@@ -485,11 +572,15 @@ function calc(){
 }
 ['fEntry','fSL','fTP'].forEach(i=>$(i).addEventListener('input',calc));
 $('tradeForm').addEventListener('reset',()=>setTimeout(()=>{$('fDate').value=todayISO;calc()}));
-$('tradeForm').addEventListener('submit',e=>{
+$('tradeForm').addEventListener('submit',async e=>{
   e.preventDefault();
-  if(isSample())trades=[];
-  const t={id:Date.now().toString(36),date:$('fDate').value,sym:$('fSym').value.trim().toUpperCase(),side,lot:num('fLot'),
+  const sbtn=$('tradeForm').querySelector('[type=submit]');
+  let t={id:Date.now().toString(36),date:$('fDate').value,sym:$('fSym').value.trim().toUpperCase(),side,lot:num('fLot'),
     entry:num('fEntry'),sl:num('fSL'),tp:num('fTP'),exit:num('fExit'),pnl:num('fPnl')||0,note:$('fNote').value.trim()};
+  if(CLOUD){sbtn.disabled=true;sbtn.textContent='Saving…';
+    try{t=await db.add(t)}catch(err){toast('Could not save the trade. Check your internet and try again.');return}
+    finally{sbtn.disabled=false;sbtn.textContent='Save trade'}}
+  if(isSample())trades=[];
   trades.push(t);save();
   const keepDate=$('fDate').value;$('tradeForm').reset();setTimeout(()=>{$('fDate').value=keepDate});
   calMonth=new Date(t.date+'T00:00:00');calMonth.setDate(1);
@@ -497,10 +588,12 @@ $('tradeForm').addEventListener('submit',e=>{
 });
 
 /* ---------- events ---------- */
-$('rows').addEventListener('click',e=>{
+$('rows').addEventListener('click',async e=>{
   const b=e.target.closest('button');if(!b)return;
   if(b.dataset.del){pendingDel=b.dataset.del;renderRows()}
-  else if(b.dataset.yes){trades=trades.filter(t=>String(t.id)!==b.dataset.yes);pendingDel=null;save();renderAll();toast('Trade deleted')}
+  else if(b.dataset.yes){const id=b.dataset.yes;const t0=trades.find(t=>String(t.id)===id);
+    if(CLOUD&&t0&&!t0.sample){try{await db.del(id)}catch(err){toast('Could not delete. Check your internet and try again.');return}}
+    trades=trades.filter(t=>String(t.id)!==id);pendingDel=null;save();renderAll();toast('Trade deleted')}
   else if(b.dataset.no){pendingDel=null;renderRows()}
 });
 $('filterSeg').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;filter=b.dataset.f;[...$('filterSeg').children].forEach(x=>x.setAttribute('aria-pressed',x===b));renderRows()});
@@ -523,20 +616,136 @@ $('exportBtn').onclick=async()=>{
 };
 $('importBtn').onclick=()=>{
   $('backupPanel').hidden=false;$('backupTitle').textContent='Restore a backup';
-  $('backupHint').textContent='Paste the backup text you saved earlier. This replaces the trades shown on this page.';
+  $('backupHint').textContent=CLOUD?'Paste the backup text you saved earlier. These trades will be added to your account.':'Paste the backup text you saved earlier. This replaces the trades shown on this page.';
   $('backupText').value='';$('backupGo').hidden=false;$('backupText').focus();
   $('backupPanel').scrollIntoView({behavior:'smooth'});
 };
-$('backupGo').onclick=()=>{
-  try{const d=JSON.parse($('backupText').value);if(!Array.isArray(d.trades))throw 0;
-    trades=d.trades;if(d.settings){settings=Object.assign(settings,d.settings);saveS();$('currency').value=settings.cur;$('goalInput').value=settings.goal}
-    save();renderAll();$('backupPanel').hidden=true;toast(`Restored ${trades.length} trades`)}
-  catch(err){toast('That text is not a valid backup. Paste the full text from “Copy backup”.')}
+$('backupGo').onclick=async()=>{
+  let d;try{d=JSON.parse($('backupText').value);if(!Array.isArray(d.trades))throw 0}catch(err){toast('That text is not a valid backup. Paste the full text from “Copy backup”.');return}
+  try{
+    if(CLOUD){const added=await db.addMany(d.trades.filter(t=>!t.sample));trades=trades.filter(t=>!t.sample).concat(added)}
+    else trades=d.trades;if(d.settings){settings=Object.assign(settings,d.settings);saveS();$('currency').value=settings.cur;$('goalInput').value=settings.goal}
+    save();renderAll();$('backupPanel').hidden=true;toast(`Restored ${d.trades.length} trades`)}
+  catch(err){toast('Could not restore. Check your internet and try again.')}
 };
 $('closeBackup').onclick=()=>$('backupPanel').hidden=true;
 
-renderAll();
-if(!chartsReady())window.addEventListener('load',renderCharts);
+/* ---------- accounts (Supabase) ---------- */
+const nn=v=>v==null?null:Number(v);
+const toRow=t=>({user_id:uid,trade_date:t.date,symbol:t.sym,side:t.side,lot:t.lot||0,entry:t.entry,sl:t.sl,tp:t.tp,exit_price:t.exit,pnl:t.pnl||0,note:t.note||null});
+const fromRow=r=>({id:r.id,created:r.created_at,date:r.trade_date,sym:r.symbol,side:r.side,lot:Number(r.lot),entry:nn(r.entry),sl:nn(r.sl),tp:nn(r.tp),exit:nn(r.exit_price),pnl:Number(r.pnl),note:r.note||''});
+const db={
+  async list(){const {data,error}=await sb.from('trades').select('*').order('trade_date',{ascending:true}).limit(10000);if(error)throw error;return data.map(fromRow)},
+  async add(t){const {data,error}=await sb.from('trades').insert(toRow(t)).select().single();if(error)throw error;return fromRow(data)},
+  async addMany(ts){let out=[];for(let i=0;i<ts.length;i+=500){const {data,error}=await sb.from('trades').insert(ts.slice(i,i+500).map(toRow)).select();if(error)throw error;out=out.concat(data.map(fromRow))}return out},
+  async del(id){const {error}=await sb.from('trades').delete().eq('id',id);if(error)throw error}
+};
+const firstName=n=>(n||'').trim().split(/\s+/)[0];
+function setTitle(name){
+  const f=firstName(name);
+  const title=f?`${f.charAt(0).toUpperCase()+f.slice(1)}'s Journey`:'My Journey';
+  $('journeyTitle').textContent=title;document.title=title+' · Money Magnet';
+  $('journeyTag').innerHTML='Money Magnet <span class="who">· '+esc(userEmail)+'</span>';
+}
+function friendly(err){
+  const m=(err&&err.message)||'';
+  if(/invalid login/i.test(m))return 'Email or password is wrong. Try again or reset your password.';
+  if(/not confirmed/i.test(m))return 'Please confirm your email first. Open the link we sent to your inbox.';
+  if(/already registered/i.test(m))return 'This email already has an account. Switch to Sign in.';
+  if(/password.*(6|short)/i.test(m))return 'Password must be at least 6 characters.';
+  if(/rate|too many/i.test(m))return 'Too many tries. Wait a minute and try again.';
+  if(/fetch|network/i.test(m))return 'Cannot reach the server. Check your internet.';
+  return m||'Something went wrong. Try again.';
+}
+function msg(el,text,ok){$(el).textContent=text;$(el).className='auth-msg '+(ok?'ok':'err');$(el).hidden=!text}
+let authMode='in';
+function setMode(m){authMode=m;[...$('authTabs').children].forEach(b=>b.setAttribute('aria-pressed',b.dataset.m===m));
+  $('nameField').hidden=m!=='up';$('authGo').textContent=m==='up'?'Create my account':'Sign in';
+  $('aPass').autocomplete=m==='up'?'new-password':'current-password';$('forgotBtn').hidden=m==='up';msg('authMsg','')}
+$('authTabs').addEventListener('click',e=>{const b=e.target.closest('button');if(b)setMode(b.dataset.m)});
+function showAuth(){$('app').hidden=true;$('authScreen').hidden=false;$('authMain').hidden=false;$('resetForm').hidden=true;document.title='Money Magnet'}
+$('authForm').addEventListener('submit',async e=>{
+  e.preventDefault();msg('authMsg','');
+  const email=$('aEmail').value.trim(),pass=$('aPass').value,name=$('aName').value.trim();
+  if(!email||!/^\S+@\S+\.\S+$/.test(email))return msg('authMsg','Enter a valid email address.');
+  if(pass.length<6)return msg('authMsg','Password must be at least 6 characters.');
+  if(authMode==='up'&&!name)return msg('authMsg','Enter your name so we can title your journey.');
+  $('authGo').disabled=true;
+  try{
+    if(authMode==='up'){
+      const {data,error}=await sb.auth.signUp({email,password:pass,options:{data:{name,goal:1000,cur:'$'},emailRedirectTo:location.origin+location.pathname}});
+      if(error)throw error;
+      if(!data.session){setMode('in');msg('authMsg','Account created. Check your inbox and tap the confirm link, then sign in here.',true)}
+    }else{
+      const {error}=await sb.auth.signInWithPassword({email,password:pass});if(error)throw error;
+    }
+  }catch(err){msg('authMsg',friendly(err))}
+  finally{$('authGo').disabled=false}
+});
+$('forgotBtn').onclick=async()=>{
+  const email=$('aEmail').value.trim();
+  if(!/^\S+@\S+\.\S+$/.test(email))return msg('authMsg','Type your email above first, then tap Forgot password.');
+  const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});
+  error?msg('authMsg',friendly(error)):msg('authMsg','Password reset link sent. Check your inbox.',true);
+};
+$('resetForm').addEventListener('submit',async e=>{
+  e.preventDefault();const p=$('aNewPass').value;
+  if(p.length<6)return msg('resetMsg','Password must be at least 6 characters.');
+  const {error}=await sb.auth.updateUser({password:p});
+  if(error)return msg('resetMsg',friendly(error));
+  toast('Password updated');const {data}=await sb.auth.getUser();if(data.user){uid=null;enter(data.user)}
+});
+$('signOutBtn').onclick=async()=>{await sb.auth.signOut();uid=null;trades=[];showAuth();setMode('in')};
+
+async function enter(user){
+  if(uid===user.id)return;uid=user.id;userEmail=user.email||'';
+  const md=user.user_metadata||{};
+  settings=Object.assign({cur:'$',goal:1000},{cur:md.cur||'$',goal:md.goal!=null?+md.goal:1000});
+  $('currency').value=settings.cur;$('goalInput').value=settings.goal;
+  setTitle(md.name);
+  $('signOutBtn').hidden=false;
+  $('footNote').textContent='Your trades are saved to your account, so they show on every phone and computer you sign in on.';
+  $('authScreen').hidden=true;$('app').hidden=false;
+  try{const list=await db.list();trades=list.length?list:makeSample()}catch(err){trades=[];toast('Could not load your trades. Check your internet and refresh.')}
+  renderAll();
+  const local=(store.get(KEY,[])||[]).filter(t=>!t.sample);
+  if(local.length){$('moveText').textContent=`You have ${local.length} trade${local.length===1?'':'s'} saved on this device from before you had an account.`;$('moveBanner').hidden=false}
+}
+$('moveBtn').onclick=async()=>{
+  const local=(store.get(KEY,[])||[]).filter(t=>!t.sample);
+  $('moveBtn').disabled=true;
+  try{const added=await db.addMany(local);trades=trades.filter(t=>!t.sample).concat(added);store.set(KEY,[]);$('moveBanner').hidden=true;renderAll();toast(`Moved ${added.length} trades to your account`)}
+  catch(err){toast('Could not move them. Check your internet and try again.')}
+  finally{$('moveBtn').disabled=false}
+};
+
+function boot(){
+  if(!CLOUD){$('app').hidden=false;renderAll();return}
+  $('app').hidden=true;
+  sb=window.supabase.createClient(CFG.SUPABASE_URL,CFG.SUPABASE_ANON_KEY);
+  sb.auth.onAuthStateChange((ev,session)=>{
+    if(ev==='PASSWORD_RECOVERY'){$('app').hidden=true;$('authScreen').hidden=false;$('authMain').hidden=true;$('resetForm').hidden=false;return}
+    if(session&&session.user)setTimeout(()=>enter(session.user));
+    else if(ev==='SIGNED_OUT'||ev==='INITIAL_SESSION'){if(!uid)showAuth()}
+  });
+}
+
+/* ---------- install as app ---------- */
+let deferredPrompt=null;
+const standalone=()=>matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+if(!standalone()&&isIOS)$('installBtn').hidden=false;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;if(!standalone())$('installBtn').hidden=false});
+window.addEventListener('appinstalled',()=>{$('installBtn').hidden=true;toast('Money Magnet installed')});
+$('installBtn').onclick=async()=>{
+  if(deferredPrompt){deferredPrompt.prompt();try{await deferredPrompt.userChoice}catch(e){}deferredPrompt=null;$('installBtn').hidden=true}
+  else{$('iosHint').hidden=false;$('iosHint').scrollIntoView({behavior:'smooth'})}
+};
+$('iosClose').onclick=()=>$('iosHint').hidden=true;
+if('serviceWorker' in navigator&&location.protocol==='https:'&&!/claude/.test(location.hostname)){navigator.serviceWorker.register('sw.js').catch(()=>{})}
+
+boot();
+if(!chartsReady())window.addEventListener('load',()=>{if(!$('app').hidden)renderCharts()});
 })();
 </script>
 </body></html>

@@ -1,0 +1,10 @@
+// Money Magnet settings.
+// Paste your Supabase details between the quotes.
+// Find them in Supabase → Project Settings → API (or "API Keys").
+// The anon / publishable key is safe to keep here: it only works together with
+// the security rules in setup.sql, which let each person see only their own trades.
+
+window.MM_CONFIG = {
+  SUPABASE_URL: "PASTE_YOUR_PROJECT_URL",
+  SUPABASE_ANON_KEY: "PASTE_YOUR_ANON_PUBLIC_KEY"
+};

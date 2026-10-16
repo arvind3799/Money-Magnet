@@ -1,0 +1,16 @@
+{
+  "name": "Money Magnet",
+  "short_name": "Money Magnet",
+  "description": "My personal trading journal: daily P&L, lot size, SL and TP.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0c0f22",
+  "theme_color": "#0c0f22",
+  "icons": [
+    {"src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+    {"src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}
