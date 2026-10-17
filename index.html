@@ -172,6 +172,12 @@ select.btn{padding-right:10px}
 .tv.tall{height:620px}
 .tv .tradingview-widget-container,.tv .tradingview-widget-container__widget{height:100%;width:100%}
 .tv iframe{color-scheme:normal}
+.tv-cols{position:relative;height:30px;margin-bottom:-1px;border-radius:12px 12px 0 0;background:#2a2e39;border:1px solid #363a45;border-bottom:0;font-size:8.5px;font-weight:800;letter-spacing:.02em;text-transform:uppercase;color:#d1d4dc}
+.tv-cols span{position:absolute;top:50%;transform:translateY(-50%);white-space:nowrap}
+.tv-cols .tl{left:12px;color:#9598a1}
+.tv-cols .tf{right:var(--tvF,71px);color:#ffc94d}
+.tv-cols .tp{right:var(--tvP,31px);color:#3fd6ff}
+.tv-cols+.tv{border-top-left-radius:0;border-top-right-radius:0}
 .tv-legend{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;font-size:11px;color:var(--muted)}
 .tv-legend span{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:3px 8px}
 .tv-legend b{color:var(--gold)}
@@ -267,17 +273,30 @@ select.btn{padding-right:10px}
 .ff-next .cd{font-family:var(--f-num);color:var(--gold);font-weight:700}
 .ff-list{flex:1;min-height:0;overflow:auto;display:grid;gap:6px;align-content:start;padding-right:2px}
 .newsv .ff-list{max-height:560px}
-.ff-day{position:sticky;top:0;z-index:1;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--fg);background:var(--panel);padding:6px 2px 4px}
-.ffe{display:grid;grid-template-columns:60px minmax(0,1fr);gap:8px;padding:9px 10px;border-radius:12px;background:#1d2350;border:1px solid #2f3772;border-left:4px solid var(--imp,#ffc94d);color:var(--fg);text-decoration:none}
+.ff-day,.ffe{display:grid;grid-template-columns:52px minmax(0,1fr) 54px 56px 56px;gap:0 4px;align-items:center}
+.ffe{row-gap:6px}
+.ffe-time{grid-row:1/3;align-self:start}
+.ffe-ev{grid-column:2/6;grid-row:1}
+.ffe .v{grid-row:2}
+.ffe .v.a{grid-column:3}.ffe .v.f{grid-column:4}.ffe .v.p{grid-column:5}
+.ff-day{position:sticky;top:0;z-index:1;color:var(--muted);background:#151935;padding:8px 10px 6px 14px;border-radius:10px;border:1px solid var(--line);font-size:9.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;text-align:right}
+.ff-day .ff-dl{grid-column:1/3;text-align:left;color:var(--fg);font-size:11px;letter-spacing:.06em}
+.ffe .v{font-family:var(--f-num);font-size:12px;font-weight:700;text-align:right;color:#e6e9ff;white-space:nowrap}
+.ffe .v i{font-style:normal;color:#6f76ad}
+.ffe .v.act{color:var(--gold);font-family:var(--f-body);font-size:11px}
+.ffe .v.mute{color:#6f76ad;font-family:var(--f-body);font-size:10px;font-weight:600}
+.ffe-ev{display:flex;align-items:center;gap:6px;min-width:0}
+.ffe-ev .ffe-cc{flex:none}
+.ffe{padding:9px 10px;border-radius:12px;background:#1d2350;border:1px solid #2f3772;border-left:4px solid var(--imp,#ffc94d);color:var(--fg);text-decoration:none}
 .ffe:hover{border-color:#4a54a8;border-left-color:var(--imp)}
 .ffe.past{opacity:.62}
 .ffe.soon{box-shadow:0 0 0 1px var(--imp),0 8px 24px -10px var(--imp)}
-.ffe-time{font-family:var(--f-num);font-weight:700;font-size:13px;display:grid;align-content:start;gap:2px}
+.ffe-time{font-family:var(--f-num);font-weight:700;font-size:12px;display:grid;align-content:center;gap:2px}
 .ffe-time small{font-family:var(--f-body);font-size:10px;font-weight:700;color:var(--gold)}
 .ffe-body{display:grid;gap:4px;min-width:0}
 .ffe-h{display:flex;align-items:center;gap:6px;min-width:0}
 .ffe-cc{flex:none;font-size:11px;font-weight:800;background:rgba(255,255,255,.1);border-radius:6px;padding:1px 6px}
-.ffe-t{font-weight:700;font-size:13px;line-height:1.3;overflow-wrap:anywhere}
+.ffe-t{font-weight:700;font-size:12.5px;line-height:1.3;overflow-wrap:anywhere}
 .ffe-n{display:flex;flex-wrap:wrap;gap:5px;font-size:11px}
 .ffe-n span{background:rgba(12,15,34,.55);border-radius:6px;padding:2px 7px;font-family:var(--f-num);color:#e6e9ff}
 .ffe-n i{font-style:normal;color:#aab0e0;font-family:var(--f-body);font-weight:700;margin-right:3px}
@@ -285,6 +304,8 @@ select.btn{padding-right:10px}
 .ff-swipe{display:flex;align-items:center;justify-content:center;gap:10px;border-radius:99px;padding:10px 14px;background:linear-gradient(90deg,#ff9f43,var(--magenta));color:#1a0f22;text-decoration:none;font-size:13px;touch-action:pan-x;user-select:none}
 .ff-arrow{font-weight:900;font-size:16px;animation:swipeup 1.6s ease-in-out infinite}
 @keyframes swipeup{0%,100%{transform:translateY(2px)}50%{transform:translateY(-4px)}}
+.ff-note{margin:0;font-size:11px;color:var(--muted)}
+.ff-note b{color:var(--gold)}
 .ff-msg{font-size:13px;color:var(--muted);line-height:1.5}
 /* custom day picker */
 .dp{position:fixed;z-index:45;width:300px;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:14px;box-shadow:0 30px 70px -20px rgba(0,0,0,.8);display:grid;gap:10px}
@@ -533,6 +554,7 @@ footer{color:var(--muted);font-size:12px;text-align:center}
     <div class="ff-cur"></div>
     <div class="ff-next" hidden></div>
     <div class="ff-list"><p class="tv-note">Loading ForexFactory events…</p></div>
+    <p class="ff-note">Actual results appear on ForexFactory the moment they are released. Tap <b>Check ↗</b> on any released event.</p>
     <a class="ff-swipe" href="https://www.forexfactory.com/calendar" target="_blank" rel="noopener"><span class="ff-arrow">↑</span><span><b>Swipe up</b> · Open ForexFactory</span></a>
   </div>
   </div>
@@ -542,7 +564,7 @@ footer{color:var(--muted);font-size:12px;text-align:center}
       <button type="button" class="btn sm ghost" id="ctryBtn">Countries</button>
     </div></div>
     <div class="ctry" id="ctryBox" hidden></div>
-    <div class="tv-legend"><span><b>Left</b> Forecast (expected)</span><span><b>Right</b> Previous (last time)</span><span>After release the <b>Actual</b> is added. Tap an event for full labelled details.</span></div>
+    <div class="tv-cols" aria-hidden="true"><span class="tl">Time · Event</span><span class="tf">Forecast</span><span class="tp">Previous</span></div>
     <div class="tv" id="tvCal"><p class="tv-note">Loading CPI, FOMC, NFP and other events…</p></div>
   </div>
 </aside>
@@ -613,9 +635,10 @@ footer{color:var(--muted);font-size:12px;text-align:center}
     <div class="ff-cur"></div>
     <div class="ff-next" hidden></div>
     <div class="ff-list"><p class="tv-note">Loading ForexFactory events…</p></div>
+    <p class="ff-note">Actual results appear on ForexFactory the moment they are released. Tap <b>Check ↗</b> on any released event.</p>
     <a class="ff-swipe" href="https://www.forexfactory.com/calendar" target="_blank" rel="noopener"><span class="ff-arrow">↑</span><span><b>Swipe up</b> · Open ForexFactory</span></a>
   </div></div>
-    <div class="panel"><div class="side-head"><h2>Economic calendar</h2><div class="cal-filters"><select id="impactSel2" aria-label="Impact"><option value="1">High impact</option><option value="0,1" selected>High + medium</option><option value="-1,0,1">All events</option></select><button type="button" class="btn sm ghost" id="ctryBtn2">Countries</button></div></div><div class="ctry" id="ctryBox2" hidden></div><div class="tv-legend"><span><b>Left</b> Forecast (expected)</span><span><b>Right</b> Previous (last time)</span><span>After release the <b>Actual</b> is added. Tap an event for full labelled details.</span></div><div class="tv tall" id="tvCal2"><p class="tv-note">Loading events…</p></div></div>
+    <div class="panel"><div class="side-head"><h2>Economic calendar</h2><div class="cal-filters"><select id="impactSel2" aria-label="Impact"><option value="1">High impact</option><option value="0,1" selected>High + medium</option><option value="-1,0,1">All events</option></select><button type="button" class="btn sm ghost" id="ctryBtn2">Countries</button></div></div><div class="ctry" id="ctryBox2" hidden></div><div class="tv-cols" aria-hidden="true"><span class="tl">Time · Event</span><span class="tf">Forecast</span><span class="tp">Previous</span></div><div class="tv tall" id="tvCal2"><p class="tv-note">Loading events…</p></div></div>
     <div class="panel"><div class="side-head"><h2>Forex &amp; market news</h2><select id="newsSel2" aria-label="News market"><option value="forex" selected>Forex</option><option value="crypto">Crypto</option><option value="index">Indices</option><option value="stock">Stocks</option></select></div><div class="tv tall" id="tvNews2"><p class="tv-note">Loading headlines…</p></div></div>
   </section>
 
@@ -2151,13 +2174,15 @@ function ffRender(box){
   if(!ev.length){list.innerHTML='<p class="ff-msg">No events match your filters. Try “All” or add more currencies.</p>';return}
   let html='',lastDay='';
   ev.forEach(e=>{const d=new Date(e.ts);const dk=d.toDateString();
-    if(dk!==lastDay){lastDay=dk;html+=`<div class="ff-day">${d.toDateString()===new Date().toDateString()?'Today · ':''}${d.toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'short'})}</div>`}
+    if(dk!==lastDay){lastDay=dk;html+=`<div class="ff-day"><span class="ff-dl">${d.toDateString()===new Date().toDateString()?'Today · '+d.toLocaleDateString(undefined,{day:'numeric',month:'short'}):d.toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short'})}</span><span>Actual</span><span>Forecast</span><span>Previous</span></div>`}
     const past=e.ts<now-60e3,soon=!past&&e.ts-now<3600e3&&e.impact!=='Holiday';
     const allDay=/T00:00:00/.test(e.date)&&e.impact==='Holiday';
-    html+=`<a class="ffe${past?' past':''}${soon?' soon':''}" style="--imp:${IMPC[e.impact]||'#ffc94d'}" href="${ffDayLink(d)}" target="_blank" rel="noopener" title="${esc(e.impact)} impact · open on ForexFactory">
-      <span class="ffe-time">${allDay?'All day':d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}).replace(' ','').toLowerCase()}${past?'<small style="color:#aab0e0">Released</small>':`<small>${inLabel(e.ts-now)}</small>`}</span>
-      <span class="ffe-body"><span class="ffe-h"><span class="ffe-cc">${FLAG[e.country]||''} ${esc(e.country)}</span><span class="ffe-t">${esc(e.title)}</span></span>
-      ${(e.forecast||e.previous||past)?`<span class="ffe-n">${e.forecast?`<span><i>Forecast</i>${esc(e.forecast)}</span>`:''}${e.previous?`<span><i>Previous</i>${esc(e.previous)}</span>`:''}${past&&e.impact!=='Holiday'?'<span class="act"><i>Actual</i>see result ↗</span>':''}</span>`:''}</span></a>`});
+    const tm=allDay?'All day':d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}).replace(' ','').toLowerCase();
+    const act=e.impact==='Holiday'?'<span class="v a mute"></span>':past?'<span class="v a act">Check ↗</span>':'<span class="v a mute">soon</span>';
+    html+=`<a class="ffe${past?' past':''}${soon?' soon':''}" style="--imp:${IMPC[e.impact]||'#ffc94d'}" href="${ffDayLink(d)}" target="_blank" rel="noopener" title="${esc(e.impact)} impact · ${past?'tap to see the actual result on ForexFactory':'open on ForexFactory'}">
+      <span class="ffe-time">${tm}<small${past?' style="color:#aab0e0"':''}>${past?'Released':inLabel(e.ts-now)}</small></span>
+      <span class="ffe-ev"><span class="ffe-cc">${FLAG[e.country]||''} ${esc(e.country)}</span><span class="ffe-t">${esc(e.title)}</span></span>
+      ${act}<span class="v f">${esc(e.forecast)||'<i>–</i>'}</span><span class="v p">${esc(e.previous)||'<i>–</i>'}</span></a>`});
   list.innerHTML=html;
   const first=list.querySelector('.ffe:not(.past)');if(first&&!list.dataset.scrolled){list.dataset.scrolled='1';list.scrollTop=Math.max(0,first.offsetTop-list.offsetTop-40)}
 }
