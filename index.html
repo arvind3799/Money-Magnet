@@ -175,8 +175,10 @@ select.btn{padding-right:10px}
 .tv-cols{position:relative;height:30px;margin-bottom:-1px;border-radius:12px 12px 0 0;background:#2a2e39;border:1px solid #363a45;border-bottom:0;font-size:8.5px;font-weight:800;letter-spacing:.02em;text-transform:uppercase;color:#d1d4dc}
 .tv-cols span{position:absolute;top:50%;transform:translateY(-50%);white-space:nowrap}
 .tv-cols .tl{left:12px;color:#9598a1}
-.tv-cols .tf{right:var(--tvF,71px);color:#ffc94d}
-.tv-cols .tp{right:var(--tvP,31px);color:#3fd6ff}
+.tv-cols .ta,.tv-cols .tf,.tv-cols .tp{width:46px;text-align:center;font-size:7.5px;letter-spacing:0;padding:3px 0;border-radius:6px}
+.tv-cols .ta{right:var(--tvA,108px);color:#2fe39a;background:rgba(47,227,154,.14)}
+.tv-cols .tf{right:var(--tvF,58px);color:#ffc94d;background:rgba(255,201,77,.14)}
+.tv-cols .tp{right:var(--tvP,8px);color:#3fd6ff;background:rgba(63,214,255,.14)}
 .tv-cols+.tv{border-top-left-radius:0;border-top-right-radius:0}
 .tv-legend{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;font-size:11px;color:var(--muted)}
 .tv-legend span{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:3px 8px}
@@ -564,7 +566,7 @@ footer{color:var(--muted);font-size:12px;text-align:center}
       <button type="button" class="btn sm ghost" id="ctryBtn">Countries</button>
     </div></div>
     <div class="ctry" id="ctryBox" hidden></div>
-    <div class="tv-cols" aria-hidden="true"><span class="tl">Time · Event</span><span class="tf">Forecast</span><span class="tp">Previous</span></div>
+    <div class="tv-cols" aria-hidden="true"><span class="tl">Time · Event</span><span class="ta">Actual</span><span class="tf">Forecast</span><span class="tp">Previous</span></div>
     <div class="tv" id="tvCal"><p class="tv-note">Loading CPI, FOMC, NFP and other events…</p></div>
   </div>
 </aside>
@@ -638,7 +640,7 @@ footer{color:var(--muted);font-size:12px;text-align:center}
     <p class="ff-note">Actual results appear on ForexFactory the moment they are released. Tap <b>Check ↗</b> on any released event.</p>
     <a class="ff-swipe" href="https://www.forexfactory.com/calendar" target="_blank" rel="noopener"><span class="ff-arrow">↑</span><span><b>Swipe up</b> · Open ForexFactory</span></a>
   </div></div>
-    <div class="panel"><div class="side-head"><h2>Economic calendar</h2><div class="cal-filters"><select id="impactSel2" aria-label="Impact"><option value="1">High impact</option><option value="0,1" selected>High + medium</option><option value="-1,0,1">All events</option></select><button type="button" class="btn sm ghost" id="ctryBtn2">Countries</button></div></div><div class="ctry" id="ctryBox2" hidden></div><div class="tv-cols" aria-hidden="true"><span class="tl">Time · Event</span><span class="tf">Forecast</span><span class="tp">Previous</span></div><div class="tv tall" id="tvCal2"><p class="tv-note">Loading events…</p></div></div>
+    <div class="panel"><div class="side-head"><h2>Economic calendar</h2><div class="cal-filters"><select id="impactSel2" aria-label="Impact"><option value="1">High impact</option><option value="0,1" selected>High + medium</option><option value="-1,0,1">All events</option></select><button type="button" class="btn sm ghost" id="ctryBtn2">Countries</button></div></div><div class="ctry" id="ctryBox2" hidden></div><div class="tv-cols" aria-hidden="true"><span class="tl">Time · Event</span><span class="ta">Actual</span><span class="tf">Forecast</span><span class="tp">Previous</span></div><div class="tv tall" id="tvCal2"><p class="tv-note">Loading events…</p></div></div>
     <div class="panel"><div class="side-head"><h2>Forex &amp; market news</h2><select id="newsSel2" aria-label="News market"><option value="forex" selected>Forex</option><option value="crypto">Crypto</option><option value="index">Indices</option><option value="stock">Stocks</option></select></div><div class="tv tall" id="tvNews2"><p class="tv-note">Loading headlines…</p></div></div>
   </section>
 
