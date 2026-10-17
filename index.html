@@ -170,6 +170,7 @@ select.btn{padding-right:10px}
 .tv{position:relative;flex:1;min-height:0;border-radius:12px;overflow:hidden}
 .tv.tall{height:620px}
 .tv .tradingview-widget-container,.tv .tradingview-widget-container__widget{height:100%;width:100%}
+.tv iframe{color-scheme:normal}
 .tv-note{color:var(--muted);font-size:13px;padding:10px 4px;margin:0}
 .tv .tradingview-widget-copyright{font-size:10px;padding:4px 0}
 .tv .tradingview-widget-copyright a{color:var(--muted)}
@@ -231,18 +232,78 @@ select.btn{padding-right:10px}
 .ticker{display:flex;align-items:center;gap:0;border-radius:14px;overflow:hidden;border:1px solid rgba(255,201,77,.35);background:linear-gradient(90deg,rgba(255,201,77,.10),rgba(255,95,162,.08) 50%,rgba(63,214,255,.08));min-width:0}
 .ticker-tag{flex:none;align-self:stretch;display:flex;align-items:center;padding:0 14px;font-family:var(--f-display);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#1a0f22;background:linear-gradient(90deg,var(--gold),var(--magenta))}
 .ticker-view{flex:1;min-width:0;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent);mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent)}
-.ticker-track{display:inline-flex;white-space:nowrap;padding:11px 0;animation:tick var(--tickT,120s) linear infinite;will-change:transform}
+.ticker-track{display:inline-flex;white-space:nowrap;padding:11px 0;animation:tick1 var(--tickT,30s) linear infinite;will-change:transform}
 .ticker:hover .ticker-track,.ticker:focus-within .ticker-track{animation-play-state:paused}
 .ticker-track span{font-size:14px;font-weight:600;padding:0 22px;position:relative}
-.ticker-track span::after{content:"$";position:absolute;right:-5px;color:var(--gold);font-weight:800;opacity:.8}
-@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.ticker-track span{font-size:15px}
+@keyframes tick1{from{transform:translateX(var(--tickFrom,100vw))}to{transform:translateX(var(--tickTo,-100%))}}
 @media (prefers-reduced-motion:reduce){.ticker-track{animation:none;white-space:normal}.ticker-track span:not(:first-child){display:none}}
 /* today date picker */
 .tdate{position:relative;display:inline-flex;align-items:center;gap:6px;cursor:pointer;border:1px solid var(--line);background:rgba(12,15,34,.45);border-radius:99px;padding:3px 10px 3px 12px;color:var(--fg);letter-spacing:.08em}
 .tdate:hover,.tdate:focus-within{border-color:var(--cyan)}
 .tdate svg{width:14px;height:14px;color:var(--cyan)}
-.tdate input{position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer;border:0;padding:0}
+.tdate{font:inherit;font-weight:800}
 .tback{margin-left:6px;border:0;background:none;color:var(--cyan);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 4px}
+
+/* ForexFactory news trading */
+.stabs{margin-bottom:10px;display:grid;grid-template-columns:1fr 1fr}
+.stabs button{font-weight:700}
+.spane{display:flex;flex-direction:column;flex:1;min-height:0}
+.ff{display:flex;flex-direction:column;gap:8px;flex:1;min-height:0}
+.ff-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px}
+.ff-top b{font-family:var(--f-display);font-size:13px;background:linear-gradient(90deg,#ff9f43,var(--magenta));-webkit-background-clip:text;background-clip:text;color:transparent}
+.ff .seg button{padding:5px 9px;font-size:11px}
+.ff-imp{align-self:flex-start}
+.ff-cur{display:flex;flex-wrap:wrap;gap:5px}
+.ff-cur button{border:1px solid var(--line);background:var(--panel2);color:var(--muted);border-radius:99px;padding:3px 8px;font-size:11px;font-weight:700}
+.ff-cur button[aria-pressed="true"]{color:#1a0f22;background:linear-gradient(90deg,#ffb86b,#ff8fb8);border-color:transparent}
+.ff-next{border-radius:12px;padding:10px 12px;background:linear-gradient(135deg,rgba(255,93,108,.18),rgba(255,159,67,.14));border:1px solid rgba(255,93,108,.45);display:grid;gap:3px;font-size:13px}
+.ff-next small{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#ffb3b9;font-weight:800}
+.ff-next b{font-size:14px}
+.ff-next .cd{font-family:var(--f-num);color:var(--gold);font-weight:700}
+.ff-list{flex:1;min-height:0;overflow:auto;display:grid;gap:6px;align-content:start;padding-right:2px}
+.newsv .ff-list{max-height:560px}
+.ff-day{position:sticky;top:0;z-index:1;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--fg);background:var(--panel);padding:6px 2px 4px}
+.ffe{display:grid;grid-template-columns:60px minmax(0,1fr);gap:8px;padding:9px 10px;border-radius:12px;background:#1d2350;border:1px solid #2f3772;border-left:4px solid var(--imp,#ffc94d);color:var(--fg);text-decoration:none}
+.ffe:hover{border-color:#4a54a8;border-left-color:var(--imp)}
+.ffe.past{opacity:.62}
+.ffe.soon{box-shadow:0 0 0 1px var(--imp),0 8px 24px -10px var(--imp)}
+.ffe-time{font-family:var(--f-num);font-weight:700;font-size:13px;display:grid;align-content:start;gap:2px}
+.ffe-time small{font-family:var(--f-body);font-size:10px;font-weight:700;color:var(--gold)}
+.ffe-body{display:grid;gap:4px;min-width:0}
+.ffe-h{display:flex;align-items:center;gap:6px;min-width:0}
+.ffe-cc{flex:none;font-size:11px;font-weight:800;background:rgba(255,255,255,.1);border-radius:6px;padding:1px 6px}
+.ffe-t{font-weight:700;font-size:13px;line-height:1.3;overflow-wrap:anywhere}
+.ffe-n{display:flex;flex-wrap:wrap;gap:5px;font-size:11px}
+.ffe-n span{background:rgba(12,15,34,.55);border-radius:6px;padding:2px 7px;font-family:var(--f-num);color:#e6e9ff}
+.ffe-n i{font-style:normal;color:#aab0e0;font-family:var(--f-body);font-weight:700;margin-right:3px}
+.ffe-n .act{background:rgba(255,201,77,.14);color:var(--gold)}
+.ff-swipe{display:flex;align-items:center;justify-content:center;gap:10px;border-radius:99px;padding:10px 14px;background:linear-gradient(90deg,#ff9f43,var(--magenta));color:#1a0f22;text-decoration:none;font-size:13px;touch-action:pan-x;user-select:none}
+.ff-arrow{font-weight:900;font-size:16px;animation:swipeup 1.6s ease-in-out infinite}
+@keyframes swipeup{0%,100%{transform:translateY(2px)}50%{transform:translateY(-4px)}}
+.ff-msg{font-size:13px;color:var(--muted);line-height:1.5}
+/* custom day picker */
+.dp{position:fixed;z-index:45;width:300px;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:14px;box-shadow:0 30px 70px -20px rgba(0,0,0,.8);display:grid;gap:10px}
+.dp-h{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.dp-h b{font-family:var(--f-display);font-size:14px}
+.dp-h button{border:1px solid var(--line);background:var(--panel2);width:32px;height:32px;border-radius:9px}
+.dp-g{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.dp-g .w{font-size:10px;color:var(--muted);text-align:center;text-transform:uppercase}
+.dp-g button{aspect-ratio:1;border:1px solid transparent;border-radius:9px;background:var(--panel2);font-size:13px;display:grid;place-items:center;position:relative;padding:0}
+.dp-g button:hover{border-color:var(--cyan)}
+.dp-g button.g{background:rgba(47,227,154,.25)} .dp-g button.r{background:rgba(255,93,108,.25)}
+.dp-g button.t{border-color:var(--gold)}
+.dp-g button.s{background:linear-gradient(135deg,var(--gold),var(--magenta));color:#1a0f22;font-weight:800}
+.dp-g button.fu{opacity:.35}
+.dp-f{display:flex;gap:8px;justify-content:space-between}
+.dp-f .btn{flex:1}
+.pick{border:1px solid var(--line);background:var(--panel2);border-radius:10px;padding:5px 10px;display:inline-flex;align-items:center;gap:6px;font-family:var(--f-display);font-size:14px;font-weight:700;color:var(--fg);cursor:pointer;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pick svg,.tdate svg{width:14px;height:14px;color:var(--cyan);flex:none}
+.pick:hover{border-color:var(--cyan)}
+.pnav .pick{flex:none}
+.pick::after{content:"▾";color:var(--cyan);font-size:12px}
+@media (max-width:600px){.pnav .pick{flex:0 1 auto;font-size:13px}}
+@media (max-width:600px){.dp{left:8px!important;right:8px;width:auto;top:auto!important;bottom:calc(8px + env(safe-area-inset-bottom,0px))}}
 
 /* tabs */
 .tabs{display:flex;gap:6px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:5px;overflow-x:auto}
@@ -299,7 +360,7 @@ table.adm{min-width:640px}
 .period .seg button{padding:8px 13px;font-size:13px;white-space:nowrap}
 .period .seg button[aria-pressed="true"]{background:linear-gradient(90deg,var(--gold),var(--magenta));color:#1a0f22}
 .pnav{display:flex;align-items:center;gap:8px;min-width:0}
-.pnav>button:not(.btn){border:1px solid var(--line);background:var(--panel2);width:32px;height:32px;border-radius:9px;flex:none}
+.pnav>button:not(.btn):not(.pick){border:1px solid var(--line);background:var(--panel2);width:32px;height:32px;border-radius:9px;flex:none}
 .pnav b{font-family:var(--f-display);font-size:14px;font-weight:700;min-width:0;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pnav .btn{padding:7px 12px}
 .cal.year{grid-template-columns:repeat(3,1fr);gap:8px}
@@ -461,12 +522,25 @@ footer{color:var(--muted);font-size:12px;text-align:center}
 
 <div class="shell">
 <aside class="side" id="sideL" aria-label="Economic calendar">
-  <div class="side-head"><h2>Economic calendar</h2><div class="cal-filters">
-    <select id="impactSel" aria-label="Impact"><option value="1">High impact</option><option value="0,1" selected>High + medium</option><option value="-1,0,1">All events</option></select>
-    <button type="button" class="btn sm ghost" id="ctryBtn">Countries</button>
+  <div class="seg stabs" id="sideTabs"><button type="button" data-st="ff" aria-pressed="true">News trading</button><button type="button" data-st="tv" aria-pressed="false">Live calendar</button></div>
+  <div class="spane" id="paneFF">
+  <div class="ff" data-ff>
+    <div class="ff-top"><b>ForexFactory calendar</b><div class="seg ff-week"><button type="button" data-wk="thisweek" aria-pressed="true">This week</button><button type="button" data-wk="nextweek" aria-pressed="false">Next week</button></div></div>
+    <div class="seg ff-imp"><button type="button" data-imp="high" aria-pressed="false">High</button><button type="button" data-imp="med" aria-pressed="true">High + medium</button><button type="button" data-imp="all" aria-pressed="false">All</button></div>
+    <div class="ff-cur"></div>
+    <div class="ff-next" hidden></div>
+    <div class="ff-list"><p class="tv-note">Loading ForexFactory events…</p></div>
+    <a class="ff-swipe" href="https://www.forexfactory.com/calendar" target="_blank" rel="noopener"><span class="ff-arrow">↑</span><span><b>Swipe up</b> · Open ForexFactory</span></a>
   </div>
-  <div class="ctry" id="ctryBox" hidden></div></div>
-  <div class="tv" id="tvCal"><p class="tv-note">Loading CPI, FOMC, NFP and other events…</p></div>
+  </div>
+  <div class="spane" id="paneTV" hidden>
+    <div class="side-head"><h2>Live results</h2><div class="cal-filters">
+      <select id="impactSel" aria-label="Impact"><option value="1">High impact</option><option value="0,1" selected>High + medium</option><option value="-1,0,1">All events</option></select>
+      <button type="button" class="btn sm ghost" id="ctryBtn">Countries</button>
+    </div></div>
+    <div class="ctry" id="ctryBox" hidden></div>
+    <div class="tv" id="tvCal"><p class="tv-note">Loading CPI, FOMC, NFP and other events…</p></div>
+  </div>
 </aside>
 <div class="wrap" id="app">
   <div class="namebar" id="nameBar">
@@ -529,6 +603,14 @@ footer{color:var(--muted);font-size:12px;text-align:center}
   </section>
 
   <section id="newsView" class="newsv" hidden>
+    <div class="panel"><div class="ff" data-ff>
+    <div class="ff-top"><b>ForexFactory calendar</b><div class="seg ff-week"><button type="button" data-wk="thisweek" aria-pressed="true">This week</button><button type="button" data-wk="nextweek" aria-pressed="false">Next week</button></div></div>
+    <div class="seg ff-imp"><button type="button" data-imp="high" aria-pressed="false">High</button><button type="button" data-imp="med" aria-pressed="true">High + medium</button><button type="button" data-imp="all" aria-pressed="false">All</button></div>
+    <div class="ff-cur"></div>
+    <div class="ff-next" hidden></div>
+    <div class="ff-list"><p class="tv-note">Loading ForexFactory events…</p></div>
+    <a class="ff-swipe" href="https://www.forexfactory.com/calendar" target="_blank" rel="noopener"><span class="ff-arrow">↑</span><span><b>Swipe up</b> · Open ForexFactory</span></a>
+  </div></div>
     <div class="panel"><div class="side-head"><h2>Economic calendar</h2><div class="cal-filters"><select id="impactSel2" aria-label="Impact"><option value="1">High impact</option><option value="0,1" selected>High + medium</option><option value="-1,0,1">All events</option></select><button type="button" class="btn sm ghost" id="ctryBtn2">Countries</button></div></div><div class="ctry" id="ctryBox2" hidden></div><div class="tv tall" id="tvCal2"><p class="tv-note">Loading events…</p></div></div>
     <div class="panel"><div class="side-head"><h2>Forex &amp; market news</h2><select id="newsSel2" aria-label="News market"><option value="forex" selected>Forex</option><option value="crypto">Crypto</option><option value="index">Indices</option><option value="stock">Stocks</option></select></div><div class="tv tall" id="tvNews2"><p class="tv-note">Loading headlines…</p></div></div>
   </section>
@@ -557,14 +639,14 @@ footer{color:var(--muted);font-size:12px;text-align:center}
     </div>
     <div class="pnav">
       <button type="button" id="pPrev" aria-label="Previous period">‹</button>
-      <b id="periodLabel">This month</b>
+      <button type="button" class="pick" id="periodLabel" title="Pick a day">This month</button>
       <button type="button" id="pNext" aria-label="Next period">›</button>
       <button class="btn ghost" type="button" id="pToday">Today</button>
     </div>
   </div>
 
   <div class="ticker" id="ticker" aria-label="Trading motivation">
-    <span class="ticker-tag">Mindset</span>
+    <span class="ticker-tag">Thought of the day</span>
     <div class="ticker-view"><div class="ticker-track" id="tickerTrack"></div></div>
   </div>
 
@@ -580,7 +662,7 @@ footer{color:var(--muted);font-size:12px;text-align:center}
 
   <section class="today" id="todayStrip">
     <div class="today-main">
-      <div class="label"><span id="tWhen">Today</span> · <label class="tdate" title="Pick a day to see its trades"><span id="tDate"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><input type="date" id="tDatePick" aria-label="Choose a day"></label><button type="button" class="tback" id="tBack" hidden>Back to today</button></div>
+      <div class="label"><span id="tWhen">Today</span> · <button type="button" class="tdate" id="tDateBtn" title="Pick a day to see its trades"><span id="tDate"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></button><button type="button" class="tback" id="tBack" hidden>Back to today</button></div>
       <div class="tbig num" id="tNet">$0.00</div>
       <div class="tmood" id="tMood">No trades yet today</div>
       <button type="button" class="share-fab" id="shareToday" aria-label="Share today’s P&amp;L"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg>Share</button>
@@ -799,6 +881,7 @@ footer{color:var(--muted);font-size:12px;text-align:center}
     </div>
   </div>
 </div>
+<div class="dp" id="dayPicker" hidden role="dialog" aria-label="Pick a day"></div>
 <div class="toast" id="toast" role="status"></div>
 
 <script src="config.js"></script>
@@ -1053,7 +1136,6 @@ function renderToday(){
   const gw=w.reduce((a,t)=>a+t.pnl,0),gl=l.reduce((a,t)=>a+t.pnl,0),net=gw+gl;
   $('tDate').textContent=new Date(day+'T00:00:00').toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'short',...(day.slice(0,4)!==todayISO.slice(0,4)?{year:'numeric'}:{})});
   $('tWhen').textContent=isToday?'Today':day<todayISO?'Past day':'Future day';$('tBack').hidden=isToday;
-  const pk=$('tDatePick');pk.value=day;pk.max=todayISO;
   document.querySelector('.ttile.win .label').textContent=isToday?"Today's profit":'Profit';
   document.querySelector('.ttile.loss .label').textContent=isToday?"Today's loss":'Loss';
   document.querySelector('.ttile:not(.win):not(.loss) .label').textContent=isToday?'Trades today':'Trades';
@@ -1457,6 +1539,7 @@ function startRealtime(){
 }
 async function initSocial(){
   $('mainTabs').hidden=false;
+  Object.keys(ffData).forEach(k=>{if(ffData[k]==='err')delete ffData[k]});ffRenderAll();
   loadMe();
   try{const {data}=await sb.from('admins').select('user_id').eq('user_id',uid).maybeSingle();isAdmin=!!data}catch(e){isAdmin=false}
   $('adminTab').hidden=!isAdmin;
@@ -1524,15 +1607,15 @@ function tvMount(id,file,cfg){
   sc.onerror=()=>{box.innerHTML='<p class="tv-note">News could not load here. It works on your Money Magnet site with an internet connection.</p>'};
   box.firstChild.appendChild(sc);
 }
-function calCfg(){return {colorTheme:'dark',isTransparent:true,width:'100%',height:'100%',locale:'en',importanceFilter:newsPrefs.impact,countryFilter:newsPrefs.ctry.join(',')}}
-function newsCfg(){return {feedMode:'market',market:newsPrefs.market,isTransparent:true,displayMode:'regular',width:'100%',height:'100%',colorTheme:'dark',locale:'en'}}
+function calCfg(){return {colorTheme:'dark',isTransparent:false,width:'100%',height:'100%',locale:'en',importanceFilter:newsPrefs.impact,countryFilter:newsPrefs.ctry.join(',')}}
+function newsCfg(){return {feedMode:'market',market:newsPrefs.market,isTransparent:false,displayMode:'regular',width:'100%',height:'100%',colorTheme:'dark',locale:'en'}}
 const wide=matchMedia('(min-width:1500px)');
 let mountedSide=false,mountedTab=false;
 function mountNews(tab){
   if(tab){tvMount('tvCal2','embed-widget-events.js',calCfg());tvMount('tvNews2','embed-widget-timeline.js',newsCfg());mountedTab=true}
-  else if(wide.matches&&!$('app').hidden){tvMount('tvCal','embed-widget-events.js',calCfg());tvMount('tvNews','embed-widget-timeline.js',newsCfg());mountedSide=true}
+  else if(wide.matches&&!$('app').hidden){if(!$('paneTV').hidden)tvMount('tvCal','embed-widget-events.js',calCfg());tvMount('tvNews','embed-widget-timeline.js',newsCfg());mountedSide=true}
 }
-function remountNews(){if(mountedSide)mountNews(false);if(mountedTab&&!$('newsView').hidden)mountNews(true)}
+function remountNews(){if(mountedSide){if(!$('paneTV').hidden)tvMount('tvCal','embed-widget-events.js',calCfg());tvMount('tvNews','embed-widget-timeline.js',newsCfg())}if(false)mountNews(false);if(mountedTab&&!$('newsView').hidden)mountNews(true)}
 function saveNews(){store.set('mm_news',newsPrefs);remountNews()}
 function ctryHTML(){return CTRY.map(([c,n])=>`<label><input type="checkbox" value="${c}" ${newsPrefs.ctry.includes(c)?'checked':''}>${n}</label>`).join('')}
 [['impactSel','ctryBtn','ctryBox','newsSel'],['impactSel2','ctryBtn2','ctryBox2','newsSel2']].forEach(([imp,btn,box,ns])=>{
@@ -1779,8 +1862,41 @@ $('log').addEventListener('drop',e=>{const fs=[...e.dataTransfer.files].filter(f
   const nb=$('nameBar');const setH=()=>document.documentElement.style.setProperty('--nameH',nb.offsetHeight+'px');
   if(window.ResizeObserver)new ResizeObserver(setH).observe(nb);setH();addEventListener('resize',setH);
 })();
-$('tDatePick').addEventListener('change',e=>{const v=e.target.value;if(!v)return;setPeriod('day',v);toast('Showing '+fmtDate(v))});
-$('tDatePick').addEventListener('click',e=>{try{e.target.showPicker&&e.target.showPicker()}catch(err){}});
+/* custom day picker: tap the date or the period name */
+let dpMonth=null,dpAnchor=null;
+function openDayPicker(btn){
+  const cur=stripDay();dpMonth=new Date(cur.slice(0,7)+'-01T00:00:00');dpAnchor=btn;drawDayPicker();
+  const dp=$('dayPicker');dp.hidden=false;
+  const r=btn.getBoundingClientRect(),w=dp.offsetWidth,h=dp.offsetHeight;
+  let left=Math.min(Math.max(8,r.left),innerWidth-w-8),top=r.bottom+8;if(top+h>innerHeight-8)top=Math.max(8,r.top-h-8);
+  dp.style.left=left+'px';dp.style.top=top+'px';
+}
+function drawDayPicker(){
+  const dp=$('dayPicker');const y=dpMonth.getFullYear(),m=dpMonth.getMonth();
+  const days=byDay(trades);const first=(new Date(y,m,1).getDay()+6)%7,n=new Date(y,m+1,0).getDate();const sel=period==='day'?iso(anchor):null;
+  let g=['Mo','Tu','We','Th','Fr','Sa','Su'].map(d=>`<span class="w">${d}</span>`).join('');
+  for(let i=0;i<first;i++)g+='<span></span>';
+  for(let d=1;d<=n;d++){const k=ymd(y,m,d),v=days[k];
+    const cls=[v>0?'g':v<0?'r':'',k===todayISO?'t':'',k===sel?'s':'',k>todayISO?'fu':''].filter(Boolean).join(' ');
+    g+=`<button type="button" data-d="${k}" class="${cls}" title="${v!=null?money(v):'No trades'}">${d}</button>`}
+  dp.innerHTML=`<div class="dp-h"><button type="button" data-nav="-1" aria-label="Previous month">‹</button><b>${dpMonth.toLocaleDateString(undefined,{month:'long',year:'numeric'})}</b><button type="button" data-nav="1" aria-label="Next month">›</button></div>
+    <div class="dp-g">${g}</div>
+    <div class="dp-f"><button type="button" class="btn sm" data-q="today">Today</button><button type="button" class="btn sm" data-q="month">Whole month</button></div>
+    <p class="hint" style="margin:0">Green and red days have trades. Tap a day to see its journal.</p>`;
+}
+$('dayPicker').addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;e.stopPropagation();
+  if(b.dataset.nav){dpMonth.setMonth(dpMonth.getMonth()+ +b.dataset.nav);drawDayPicker();return}
+  if(b.dataset.d){closeDayPicker();setPeriod('day',b.dataset.d);toast('Showing '+fmtDate(b.dataset.d));return}
+  if(b.dataset.q==='today'){closeDayPicker();setPeriod('day',todayISO);return}
+  if(b.dataset.q==='month'){closeDayPicker();setPeriod('month',iso(dpMonth));return}
+});
+function closeDayPicker(){$('dayPicker').hidden=true}
+document.addEventListener('click',e=>{if(!$('dayPicker').hidden&&!e.target.closest('#dayPicker')&&e.target.closest('button')!==dpAnchor)closeDayPicker()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDayPicker()});
+addEventListener('scroll',()=>{if(!$('dayPicker').hidden&&innerWidth>600)closeDayPicker()},{passive:true});
+$('tDateBtn').onclick=e=>{e.stopPropagation();$('dayPicker').hidden?openDayPicker(e.currentTarget):closeDayPicker()};
+$('periodLabel').onclick=e=>{e.stopPropagation();$('dayPicker').hidden?openDayPicker(e.currentTarget):closeDayPicker()};
 $('tBack').onclick=()=>setPeriod('day',todayISO);
 const MINDSET=[
   'Discipline is choosing what you want most over what you want now.',
@@ -1818,15 +1934,41 @@ const MINDSET=[
   'Plan the trade, trade the plan, review the result.',
   'A focused mind finds better entries.',
   'Gratitude for small wins attracts bigger ones.',
-  'You are a money magnet. Act like one: calm, clear and disciplined.'
+  'You are a money magnet. Act like one: calm, clear and disciplined.',
+  'The trade you skip can be the best decision of your day.',
+  'Respect the market. It owes you nothing.',
+  'Losses are tuition. Pay them small and learn fast.',
+  'Win with grace, lose with dignity, learn with humility.',
+  'Rich is a number. Wealthy is a mindset.',
+  'Do the boring things right and the results become exciting.',
+  'Trade less, think more.',
+  'Your edge only works if you let it play out.',
+  'Help someone today. Good karma has no stop loss.',
+  'Sleep well, eat well, trade well.',
+  'Do not chase price. Let price come to your level.',
+  'Big goals, small risks, steady steps.',
+  'A calm mind sees what a greedy mind misses.',
+  'Be the trader your future self will thank.',
+  'Every rule you follow is a promise kept to yourself.',
+  'The account grows when the trader grows.',
+  'Success is renting, not owning. The rent is due every day.',
+  'Your worst trade teaches more than your best one.',
+  'Discipline today, freedom tomorrow.',
+  'Kind words cost nothing and pay forever.',
+  'A plan written down is a plan half done.',
+  'Consistency beats intensity.',
+  'Stay curious. The market changes, so must you.',
+  'Money follows value. Become valuable.'
 ];
 function buildTicker(){
-  const a=MINDSET.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}
-  const html=a.map(q=>`<span>${esc(q)}</span>`).join('');
-  const tr=$('tickerTrack');tr.innerHTML=html+html.replace(/<span>/g,'<span aria-hidden="true">');
-  requestAnimationFrame(()=>{const w=tr.scrollWidth/2;tr.style.setProperty('--tickT',Math.max(60,Math.round(w/55))+'s')});
+  const dayN=Math.floor((Date.now()-new Date().getTimezoneOffset()*60000)/864e5);
+  const q=MINDSET[dayN%MINDSET.length];
+  const tr=$('tickerTrack');tr.innerHTML=`<span>${esc(q)}</span>`;
+  requestAnimationFrame(()=>{const vw=tr.parentElement.offsetWidth,tw=tr.scrollWidth;
+    tr.style.setProperty('--tickFrom',vw+'px');tr.style.setProperty('--tickTo',(-tw)+'px');
+    const T=Math.max(14,Math.round((vw+tw)/70));tr.style.setProperty('--tickT',T+'s');tr.style.animationDelay=(-T*vw/(vw+tw))+'s'});
 }
-buildTicker();
+buildTicker();let tkT;addEventListener('resize',()=>{clearTimeout(tkT);tkT=setTimeout(buildTicker,300)});
 
 /* ---------- share P&L card ---------- */
 let shareState={what:'today',fmt:'story',tradeId:null};
@@ -1936,6 +2078,73 @@ $('shareGo').onclick=async()=>{
 };
 function saveShare(blob){const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=shareName();document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),4000)}
 $('shareSave').onclick=async()=>{const blob=await shareBlob();if(blob){saveShare(blob);toast('Image saved. On iPhone, long-press the image to add it to Photos.')}};
+
+/* ---------- ForexFactory news-trading calendar ---------- */
+const FLAG={USD:'🇺🇸',EUR:'🇪🇺',GBP:'🇬🇧',JPY:'🇯🇵',AUD:'🇦🇺',CAD:'🇨🇦',CHF:'🇨🇭',NZD:'🇳🇿',CNY:'🇨🇳',INR:'🇮🇳',ALL:'🌐'};
+const IMPC={High:'#ff5d6c',Medium:'#ff9f43',Low:'#ffd166',Holiday:'#8b91c7'};
+let ffPrefs=Object.assign({imp:'med',cur:['USD','EUR','GBP','JPY','AUD','CAD','CHF','NZD','CNY'],wk:'thisweek'},store.get('mm_ff',{}));
+let ffData={},ffLoading={};
+async function ffFetch(wk){
+  const ck='mm_ff_'+wk,c=store.get(ck,null);
+  if(c&&Date.now()-c.t<30*60e3)return c.data;
+  let data=null;
+  try{const ctl=new AbortController();const to=setTimeout(()=>ctl.abort(),6000);
+    const r=await fetch(`https://nfs.faireconomy.media/ff_calendar_${wk}.json`,{signal:ctl.signal});clearTimeout(to);if(r.ok)data=await r.json()}catch(e){}
+  if(!data&&CLOUD&&sb){try{const {data:d,error}=await sb.functions.invoke('ff-calendar',{body:{week:wk}});if(!error&&Array.isArray(d))data=d}catch(e){}}
+  if(!data&&c)return c.data;
+  if(!data)throw new Error('setup');
+  store.set(ck,{t:Date.now(),data});return data;
+}
+const ffDayLink=d=>`https://www.forexfactory.com/calendar?day=${d.toLocaleDateString('en-US',{month:'short'}).toLowerCase()}${d.getDate()}.${d.getFullYear()}`;
+function inLabel(ms){const m=Math.round(ms/60000);if(m<1)return 'now';if(m<60)return `in ${m}m`;const h=Math.floor(m/60);if(h<24)return `in ${h}h ${m%60}m`;return `in ${Math.floor(h/24)}d ${h%24}h`}
+function ffFilter(list){
+  const imps=ffPrefs.imp==='high'?['High']:ffPrefs.imp==='med'?['High','Medium']:['High','Medium','Low','Holiday'];
+  return list.filter(e=>imps.includes(e.impact)&&(ffPrefs.cur.includes(e.country)||e.country==='All'));
+}
+function ffRenderAll(){document.querySelectorAll('[data-ff]').forEach(ffRender)}
+function ffRender(box){
+  box.querySelectorAll('.ff-week button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.wk===ffPrefs.wk));
+  box.querySelectorAll('.ff-imp button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.imp===ffPrefs.imp));
+  box.querySelector('.ff-cur').innerHTML=['USD','EUR','GBP','JPY','AUD','CAD','CHF','NZD','CNY'].map(c=>`<button type="button" data-cur="${c}" aria-pressed="${ffPrefs.cur.includes(c)}">${FLAG[c]} ${c}</button>`).join('');
+  const list=box.querySelector('.ff-list'),nx=box.querySelector('.ff-next');
+  const data=ffData[ffPrefs.wk];
+  if(data==='err'){nx.hidden=true;list.innerHTML=`<p class="ff-msg">ForexFactory data could not load. If this keeps happening, finish the one-time <b>ff-calendar</b> setup in Supabase (see the setup file), or tap the button below to open ForexFactory.</p>`;return}
+  if(!data){list.innerHTML='<p class="tv-note">Loading ForexFactory events…</p>';ffLoad(ffPrefs.wk);return}
+  const now=Date.now();const ev=ffFilter(data).map(e=>Object.assign({},e,{ts:new Date(e.date).getTime()})).sort((a,b)=>a.ts-b.ts);
+  const next=ev.find(e=>e.impact==='High'&&e.ts>now-60e3);
+  if(next){nx.hidden=false;nx.innerHTML=`<small>Next high-impact news</small><b>${FLAG[next.country]||''} ${esc(next.country)} · ${esc(next.title)}</b><span><span class="cd">${inLabel(next.ts-now)}</span> · ${new Date(next.ts).toLocaleString(undefined,{weekday:'short',hour:'2-digit',minute:'2-digit'})}${next.forecast?` · Forecast <b>${esc(next.forecast)}</b>`:''}${next.previous?` · Previous <b>${esc(next.previous)}</b>`:''}</span>`}else nx.hidden=true;
+  if(!ev.length){list.innerHTML='<p class="ff-msg">No events match your filters. Try “All” or add more currencies.</p>';return}
+  let html='',lastDay='';
+  ev.forEach(e=>{const d=new Date(e.ts);const dk=d.toDateString();
+    if(dk!==lastDay){lastDay=dk;html+=`<div class="ff-day">${d.toDateString()===new Date().toDateString()?'Today · ':''}${d.toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'short'})}</div>`}
+    const past=e.ts<now-60e3,soon=!past&&e.ts-now<3600e3&&e.impact!=='Holiday';
+    const allDay=/T00:00:00/.test(e.date)&&e.impact==='Holiday';
+    html+=`<a class="ffe${past?' past':''}${soon?' soon':''}" style="--imp:${IMPC[e.impact]||'#ffc94d'}" href="${ffDayLink(d)}" target="_blank" rel="noopener" title="${esc(e.impact)} impact · open on ForexFactory">
+      <span class="ffe-time">${allDay?'All day':d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}).replace(' ','').toLowerCase()}${past?'<small style="color:#aab0e0">Released</small>':`<small>${inLabel(e.ts-now)}</small>`}</span>
+      <span class="ffe-body"><span class="ffe-h"><span class="ffe-cc">${FLAG[e.country]||''} ${esc(e.country)}</span><span class="ffe-t">${esc(e.title)}</span></span>
+      ${(e.forecast||e.previous||past)?`<span class="ffe-n">${e.forecast?`<span><i>Forecast</i>${esc(e.forecast)}</span>`:''}${e.previous?`<span><i>Previous</i>${esc(e.previous)}</span>`:''}${past&&e.impact!=='Holiday'?'<span class="act"><i>Actual</i>see result ↗</span>':''}</span>`:''}</span></a>`});
+  list.innerHTML=html;
+  const first=list.querySelector('.ffe:not(.past)');if(first&&!list.dataset.scrolled){list.dataset.scrolled='1';list.scrollTop=Math.max(0,first.offsetTop-list.offsetTop-40)}
+}
+async function ffLoad(wk){if(ffLoading[wk])return;ffLoading[wk]=true;try{ffData[wk]=await ffFetch(wk)}catch(e){ffData[wk]='err'}ffLoading[wk]=false;ffRenderAll()}
+document.addEventListener('click',e=>{
+  const box=e.target.closest('[data-ff]');if(!box)return;const b=e.target.closest('button');if(!b)return;
+  if(b.dataset.wk){ffPrefs.wk=b.dataset.wk;box.querySelector('.ff-list').dataset.scrolled=''}
+  else if(b.dataset.imp)ffPrefs.imp=b.dataset.imp;
+  else if(b.dataset.cur){const c=b.dataset.cur;ffPrefs.cur=ffPrefs.cur.includes(c)?ffPrefs.cur.filter(x=>x!==c):ffPrefs.cur.concat(c);if(!ffPrefs.cur.length)ffPrefs.cur=['USD']}
+  else return;
+  store.set('mm_ff',ffPrefs);ffRenderAll();
+});
+// swipe up on the button opens ForexFactory, like a story link
+document.querySelectorAll('.ff-swipe').forEach(a=>{let y0=null;
+  a.addEventListener('touchstart',e=>{y0=e.touches[0].clientY},{passive:true});
+  a.addEventListener('touchend',e=>{if(y0!=null&&y0-e.changedTouches[0].clientY>40){e.preventDefault();window.open(a.href,'_blank','noopener')}y0=null});
+});
+$('sideTabs').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const st=b.dataset.st;
+  [...$('sideTabs').children].forEach(x=>x.setAttribute('aria-pressed',x===b));$('paneFF').hidden=st!=='ff';$('paneTV').hidden=st!=='tv';
+  if(st==='tv'&&!$('tvCal').querySelector('iframe'))tvMount('tvCal','embed-widget-events.js',calCfg())});
+setInterval(()=>{if(document.hidden)return;ffRenderAll()},60e3);
+ffRenderAll();
 
 /* ---------- MT5 import ---------- */
 let mt5Parsed=[];
