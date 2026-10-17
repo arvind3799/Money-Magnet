@@ -172,6 +172,14 @@ select.btn{padding-right:10px}
 .tv.tall{height:620px}
 .tv .tradingview-widget-container,.tv .tradingview-widget-container__widget{height:100%;width:100%}
 .tv iframe{color-scheme:normal}
+.tv-cols{position:relative;height:30px;margin-bottom:-1px;border-radius:12px 12px 0 0;background:#2a2e39;border:1px solid #363a45;border-bottom:0;font-size:8.5px;font-weight:800;letter-spacing:.02em;text-transform:uppercase;color:#d1d4dc}
+.tv-cols span{position:absolute;top:50%;transform:translateY(-50%);white-space:nowrap}
+.tv-cols .tl{left:12px;color:#9598a1}
+.tv-cols .ta,.tv-cols .tf,.tv-cols .tp{width:46px;text-align:center;font-size:7.5px;letter-spacing:0;padding:3px 0;border-radius:6px}
+.tv-cols .ta{right:var(--tvA,108px);color:#2fe39a;background:rgba(47,227,154,.14)}
+.tv-cols .tf{right:var(--tvF,58px);color:#ffc94d;background:rgba(255,201,77,.14)}
+.tv-cols .tp{right:var(--tvP,8px);color:#3fd6ff;background:rgba(63,214,255,.14)}
+.tv-cols+.tv{border-top-left-radius:0;border-top-right-radius:0}
 .tv-legend{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;font-size:11px;color:var(--muted)}
 .tv-legend span{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:3px 8px}
 .tv-legend b{color:var(--gold)}
@@ -428,6 +436,10 @@ form{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px}
 .outcome button[aria-pressed="true"][data-v="tp"]{background:rgba(47,227,154,.15);border-color:var(--win);color:var(--win)}
 .outcome button[aria-pressed="true"][data-v="sl"]{background:rgba(255,93,108,.15);border-color:var(--loss);color:var(--loss)}
 .outcome button[aria-pressed="true"][data-v="manual"]{background:rgba(255,201,77,.13);border-color:var(--gold);color:var(--gold)}
+.pnl-in{display:flex;gap:6px}
+.pnl-in input{flex:1;min-width:0}
+.pnl-in select{flex:none;width:auto;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:0 6px;font-size:12px;font-weight:700}
+.fx-note{font-size:11px;color:var(--muted)}
 .auto-tag{font-size:9px;letter-spacing:.08em;background:rgba(63,214,255,.15);color:var(--cyan);border-radius:5px;padding:1px 5px;margin-left:4px;vertical-align:1px}
 .auto-tag.off{background:rgba(255,201,77,.13);color:var(--gold);cursor:pointer}
 .note-f{grid-column:span 5}
@@ -558,7 +570,7 @@ footer{color:var(--muted);font-size:12px;text-align:center}
       <button type="button" class="btn sm ghost" id="ctryBtn">Countries</button>
     </div></div>
     <div class="ctry" id="ctryBox" hidden></div>
-    <div class="tv-legend"><span><b>Left</b> Forecast (expected)</span><span><b>Right</b> Previous (last time)</span><span>After release the <b>Actual</b> is added. Tap an event for full labelled details.</span></div>
+    <div class="tv-cols" aria-hidden="true"><span class="tl">Time · Event</span><span class="ta">Actual</span><span class="tf">Forecast</span><span class="tp">Previous</span></div>
     <div class="tv" id="tvCal"><p class="tv-note">Loading CPI, FOMC, NFP and other events…</p></div>
   </div>
 </aside>
@@ -577,7 +589,7 @@ footer{color:var(--muted);font-size:12px;text-align:center}
   <header>
     <div class="hdr-actions">
       <select class="btn" id="currency" aria-label="Currency">
-        <option value="$">USD $</option><option value="₹">INR ₹</option><option value="€">EUR €</option><option value="£">GBP £</option>
+        <option value="$">USD $</option><option value="₹">INR ₹</option><option value="€">EUR €</option><option value="£">GBP £</option><option value="AED ">AED</option>
       </select>
       <button class="btn" id="installBtn" type="button" hidden>⬇ Install app</button>
       <button class="btn mt5" id="mt5Btn" type="button">Import from MT5</button>
@@ -632,7 +644,7 @@ footer{color:var(--muted);font-size:12px;text-align:center}
     <p class="ff-note">Actual results appear on ForexFactory the moment they are released. Tap <b>Check ↗</b> on any released event.</p>
     <a class="ff-swipe" href="https://www.forexfactory.com/calendar" target="_blank" rel="noopener"><span class="ff-arrow">↑</span><span><b>Swipe up</b> · Open ForexFactory</span></a>
   </div></div>
-    <div class="panel"><div class="side-head"><h2>Economic calendar</h2><div class="cal-filters"><select id="impactSel2" aria-label="Impact"><option value="1">High impact</option><option value="0,1" selected>High + medium</option><option value="-1,0,1">All events</option></select><button type="button" class="btn sm ghost" id="ctryBtn2">Countries</button></div></div><div class="ctry" id="ctryBox2" hidden></div><div class="tv-legend"><span><b>Left</b> Forecast (expected)</span><span><b>Right</b> Previous (last time)</span><span>After release the <b>Actual</b> is added. Tap an event for full labelled details.</span></div><div class="tv tall" id="tvCal2"><p class="tv-note">Loading events…</p></div></div>
+    <div class="panel"><div class="side-head"><h2>Economic calendar</h2><div class="cal-filters"><select id="impactSel2" aria-label="Impact"><option value="1">High impact</option><option value="0,1" selected>High + medium</option><option value="-1,0,1">All events</option></select><button type="button" class="btn sm ghost" id="ctryBtn2">Countries</button></div></div><div class="ctry" id="ctryBox2" hidden></div><div class="tv-cols" aria-hidden="true"><span class="tl">Time · Event</span><span class="ta">Actual</span><span class="tf">Forecast</span><span class="tp">Previous</span></div><div class="tv tall" id="tvCal2"><p class="tv-note">Loading events…</p></div></div>
     <div class="panel"><div class="side-head"><h2>Forex &amp; market news</h2><select id="newsSel2" aria-label="News market"><option value="forex" selected>Forex</option><option value="crypto">Crypto</option><option value="index">Indices</option><option value="stock">Stocks</option></select></div><div class="tv tall" id="tvNews2"><p class="tv-note">Loading headlines…</p></div></div>
   </section>
 
@@ -799,7 +811,7 @@ footer{color:var(--muted);font-size:12px;text-align:center}
         </div>
       </div>
       <div class="f"><label for="fExit">Exit price</label><input id="fExit" type="number" step="any" placeholder="Fills from TP / SL"></div>
-      <div class="f"><label for="fPnl">Profit / Loss <span class="auto-tag" id="autoTag">Auto</span></label><input id="fPnl" type="number" step="0.01" placeholder="Calculated for you" required></div>
+      <div class="f"><label for="fPnl">Profit / Loss <span class="auto-tag" id="autoTag">Auto</span></label><div class="pnl-in"><input id="fPnl" type="number" step="0.01" placeholder="Calculated for you" required><select id="fCcy" aria-label="Currency of this P&amp;L"><option>USD</option><option>INR</option><option>EUR</option><option>GBP</option><option>AED</option></select></div></div>
       <div class="f"><label for="fCs">Contract size</label><input id="fCs" type="number" step="any" min="0" placeholder="100"></div>
       <div class="f note-f"><label for="fNote">Notes</label><input id="fNote" placeholder="Setup, emotions, lesson learned"></div>
       <div class="calc" id="calcRow">
@@ -999,6 +1011,22 @@ const save=()=>{if(!CLOUD)store.set(KEY,trades)};
 const saveS=()=>{if(CLOUD&&sb){sb.auth.updateUser({data:{goal:settings.goal,cur:settings.cur,acct:settings.acct||null}}).catch(()=>{})}else store.set(SKEY,settings)};
 const isSample=()=>trades.length&&trades.every(t=>t.sample);
 
+/* ---------- currency conversion ---------- */
+const SYM2C={'$':'USD','₹':'INR','€':'EUR','£':'GBP','AED ':'AED'},C2SYM={USD:'$',INR:'₹',EUR:'€',GBP:'£',AED:'AED '};
+let FX=Object.assign({USD:1,INR:88,EUR:0.86,GBP:0.75,AED:3.6725},(store.get('mm_fx',{})||{}).rates||{});
+let fxLive=!!(store.get('mm_fx',{})||{}).t,noCcy=false;
+const dispC=()=>SYM2C[settings.cur]||'USD';
+const guessCcy=sym=>isIndia(sym||'')?'INR':'USD';
+const conv=(v,from,to)=>{const a=FX[from]||1,b=FX[to]||1;return v/a*b};
+function applyFx(){const to=dispC();trades.forEach(t=>{if(t.raw===undefined)t.raw=t.pnl;if(!t.ccy)t.ccy=guessCcy(t.sym);t.pnl=Math.round(conv(t.raw||0,t.ccy,to)*100)/100})}
+const moneyC=(v,ccy)=>{const s=v<0?'-':(v>0?'+':'');return s+(C2SYM[ccy]||ccy+' ')+Math.abs(v).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})};
+async function loadFx(){
+  const c=store.get('mm_fx',null);if(c&&Date.now()-c.t<12*3600e3){FX=Object.assign(FX,c.rates);fxLive=true;return}
+  let rates=null;
+  try{const r=await fetch('https://open.er-api.com/v6/latest/USD');const j=await r.json();if(j&&j.rates)rates=j.rates}catch(e){}
+  if(!rates){try{const r=await fetch('https://api.frankfurter.app/latest?from=USD&to=INR,EUR,GBP,AED');const j=await r.json();if(j&&j.rates)rates=Object.assign({USD:1},j.rates)}catch(e){}}
+  if(rates){const keep={};['USD','INR','EUR','GBP','AED'].forEach(k=>{if(rates[k])keep[k]=rates[k]});FX=Object.assign(FX,keep);fxLive=true;store.set('mm_fx',{t:Date.now(),rates:keep});if($('app')&&!$('app').hidden)renderAll()}
+}
 const money=(v,sign=true)=>{const s=v<0?'-':(sign&&v>0?'+':'');return s+settings.cur+Math.abs(v).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})};
 const short=v=>{const a=Math.abs(v);const s=v<0?'-':'+';return s+(a>=1000?(a/1000).toFixed(1)+'k':Math.round(a))};
 const fmtDate=s=>new Date(s+'T00:00:00').toLocaleDateString(undefined,{day:'numeric',month:'short'});
@@ -1198,14 +1226,14 @@ function renderToday(){
   $('tCount').textContent=list.length;
   $('tDots').innerHTML=list.map(t=>`<i title="${esc(t.sym)} ${money(t.pnl)}" style="background:var(${t.pnl>=0?'--win':'--loss'})"></i>`).join('');
 }
-function renderAll(){renderToday();renderStats();renderCharts();renderCal();renderRows()}
+function renderAll(){applyFx();renderToday();renderStats();renderCharts();renderCal();renderRows()}
 
 /* ---------- form ---------- */
 $('fDate').value=todayISO;
 $('sidePick').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;side=b.dataset.v;[...$('sidePick').children].forEach(x=>x.setAttribute('aria-pressed',x===b));calc()});
 const num=id=>{const v=$(id).value;return v===''?null:parseFloat(v)};
 /* ---------- automatic P&L ---------- */
-let outcome='tp',pnlManual=false,csManual=false;
+let outcome='tp',pnlManual=false,csManual=false,ccyManual=false;
 const USD_PER={USD:1,EUR:1.08,GBP:1.27,AUD:.65,NZD:.6,CAD:.73,CHF:1.13,JPY:.0067,SGD:.75,HKD:.128};
 function isIndia(sym){return (MKT[sym]||'').startsWith('India')}
 function contractOf(sym){
@@ -1228,6 +1256,7 @@ function onSym(){
   if(!csManual)$('fCs').value=sym?contractOf(sym):'';
   document.querySelector('label[for="fLot"]').textContent=isIndia(sym)?'Quantity':'Lot size';
   $('fLot').placeholder=isIndia(sym)?'75':'0.10';
+  if(!ccyManual)$('fCcy').value=guessCcy(sym);
   calc();
 }
 function calc(){
@@ -1250,22 +1279,23 @@ function calc(){
   let warn='';
   if(outcome==='tp'&&pnl<0)warn=' <span class="warn">Your TP is on the losing side for a '+side+'. Check Buy / Sell.</span>';
   if(outcome==='sl'&&pnl>0)warn=' <span class="warn">Your SL is on the winning side for a '+side+'. Check Buy / Sell.</span>';
-  line.innerHTML=`Auto P&amp;L: ${(move>=0?'+':'')+move.toFixed(5).replace(/\.?0+$/,'')} × ${lot} ${isIndia(sym)?'qty':'lot'} × ${cs.toLocaleString()} ${isIndia(sym)?'':unitLabel(sym)}${f!==1?` × ${f.toFixed(4)}`:''} = <b class="${pnl>=0?'up':'down'}">${approx?'≈ ':''}${money(pnl)}</b>${approx?' (rough rate, type your broker\'s figure for the exact amount)':''}${pnlManual?' · <span class="warn">You typed your own P&amp;L</span>':''}${warn}`;
+  line.innerHTML=`Auto P&amp;L: ${(move>=0?'+':'')+move.toFixed(5).replace(/\.?0+$/,'')} × ${lot} ${isIndia(sym)?'qty':'lot'} × ${cs.toLocaleString()} ${isIndia(sym)?'':unitLabel(sym)}${f!==1?` × ${f.toFixed(4)}`:''} = <b class="${pnl>=0?'up':'down'}">${approx?'≈ ':''}${moneyC(pnl,$('fCcy').value)}</b>${approx?' (rough rate, type your broker\'s figure for the exact amount)':''}${pnlManual?' · <span class="warn">You typed your own P&amp;L</span>':''}${warn}`;
 }
 ['fEntry','fSL','fTP','fExit','fLot'].forEach(i=>$(i).addEventListener('input',calc));
 $('fSym').addEventListener('input',onSym);$('fSym').addEventListener('change',onSym);
 $('fCs').addEventListener('input',()=>{csManual=true;calc()});
+$('fCcy').addEventListener('change',()=>{ccyManual=true;calc()});
 $('fPnl').addEventListener('input',()=>{pnlManual=$('fPnl').value!=='';$('autoTag').textContent=pnlManual?'Manual · tap for auto':'Auto';$('autoTag').classList.toggle('off',pnlManual);calc()});
 $('autoTag').addEventListener('click',e=>{e.preventDefault();pnlManual=false;$('autoTag').textContent='Auto';$('autoTag').classList.remove('off');calc()});
 $('outPick').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;outcome=b.dataset.v;[...$('outPick').children].forEach(x=>x.setAttribute('aria-pressed',x===b));if(outcome==='manual'){$('fExit').value='';$('fExit').focus()}calc()});
 $('tradeForm').addEventListener('reset',()=>{if(editingId!=null){setTimeout(endEdit);}},true);
-$('tradeForm').addEventListener('reset',()=>setTimeout(()=>{$('fDate').value=todayISO;pnlManual=false;csManual=false;$('autoTag').textContent='Auto';$('autoTag').classList.remove('off');calc()}));
+$('tradeForm').addEventListener('reset',()=>setTimeout(()=>{$('fDate').value=todayISO;pnlManual=false;csManual=false;ccyManual=false;$('fCcy').value='USD';$('autoTag').textContent='Auto';$('autoTag').classList.remove('off');calc()}));
 $('tradeForm').addEventListener('submit',async e=>{
   e.preventDefault();
   const sbtn=$('tradeForm').querySelector('[type=submit]');
   if(editingId!=null)return updateTrade();
   let t={id:Date.now().toString(36),date:$('fDate').value,sym:$('fSym').value.trim().toUpperCase(),side,lot:num('fLot'),
-    entry:num('fEntry'),sl:num('fSL'),tp:num('fTP'),exit:num('fExit'),pnl:num('fPnl')||0,note:$('fNote').value.trim()};
+    entry:num('fEntry'),sl:num('fSL'),tp:num('fTP'),exit:num('fExit'),pnl:num('fPnl')||0,ccy:$('fCcy').value,note:$('fNote').value.trim()};
   if(CLOUD){sbtn.disabled=true;sbtn.textContent='Saving…';
     try{t=await db.add(t)}catch(err){toast('Could not save the trade. Check your internet and try again.');return}
     finally{sbtn.disabled=false;sbtn.textContent='Save trade'}}
@@ -1291,7 +1321,8 @@ function startEdit(id){
   csManual=false;pnlManual=false;$('fCs').value=contractOf(t.sym);
   document.querySelector('label[for="fLot"]').textContent=isIndia(t.sym)?'Quantity':'Lot size';
   calc();
-  if(Math.abs((num('fPnl')||0)-t.pnl)>0.005){pnlManual=true;$('fPnl').value=t.pnl;$('autoTag').textContent='Manual · tap for auto';$('autoTag').classList.add('off');calc()}
+  $('fCcy').value=t.ccy||guessCcy(t.sym);ccyManual=true;calc();const rawP=t.raw!==undefined?t.raw:t.pnl;
+  if(Math.abs((num('fPnl')||0)-rawP)>0.005){pnlManual=true;$('fPnl').value=rawP;$('autoTag').textContent='Manual · tap for auto';$('autoTag').classList.add('off');calc()}
   $('formTitle').textContent='Edit trade · '+t.sym+' · '+fmtDate(t.date);
   $('saveBtn').textContent='Update trade';$('cancelEdit').hidden=false;$('log').classList.add('editing');
   renderRows();$('log').scrollIntoView({behavior:'smooth',block:'start'});
@@ -1305,7 +1336,7 @@ $('cancelEdit').onclick=endEdit;
 async function updateTrade(){
   const old=trades.find(x=>String(x.id)===String(editingId));if(!old){endEdit();return}
   let t=Object.assign({},old,{date:$('fDate').value,sym:$('fSym').value.trim().toUpperCase(),side,lot:num('fLot'),
-    entry:num('fEntry'),sl:num('fSL'),tp:num('fTP'),exit:num('fExit'),pnl:num('fPnl')||0,note:$('fNote').value.trim()});
+    entry:num('fEntry'),sl:num('fSL'),tp:num('fTP'),exit:num('fExit'),pnl:num('fPnl')||0,raw:undefined,ccy:$('fCcy').value,note:$('fNote').value.trim()});
   if(CLOUD){const b=$('saveBtn');b.disabled=true;b.textContent='Updating…';
     try{t=await db.update(t)}catch(err){toast('Could not update. Check your internet and try again.');b.disabled=false;b.textContent='Update trade';return}
     b.disabled=false}
@@ -1334,7 +1365,10 @@ $('cal').addEventListener('click',e=>{const d=e.target.closest('[data-day]');if(
 $('calPrev').onclick=()=>{if(period==='month'||period==='year')return shiftPeriod(-1);if(period==='all'){calMonth.setFullYear(calMonth.getFullYear()-1)}else calMonth.setMonth(calMonth.getMonth()-1);renderCal()};
 $('calNext').onclick=()=>{if(period==='month'||period==='year')return shiftPeriod(1);if(period==='all'){calMonth.setFullYear(calMonth.getFullYear()+1)}else calMonth.setMonth(calMonth.getMonth()+1);renderCal()};
 $('currency').value=settings.cur;
-$('currency').onchange=e=>{settings.cur=e.target.value;saveS();renderAll()};
+$('currency').onchange=e=>{const from=dispC();settings.cur=e.target.value;const to=dispC();
+  if(settings.goal)settings.goal=Math.round(conv(settings.goal,from,to));if(settings.acct)settings.acct=Math.round(conv(settings.acct,from,to));
+  $('goalInput').value=settings.goal;saveS();renderAll();
+  toast(from===to?'Currency updated':`Showing all amounts in ${to}${fxLive?` · 1 USD = ${(+FX[to]).toFixed(to==='USD'?0:2)} ${to}`:' (approximate rate)'}`)};
 $('goalInput').value=settings.goal;
 $('goalInput').addEventListener('change',e=>{settings.goal=Math.max(0,+e.target.value||0);saveS();renderStats()});
 
@@ -1364,14 +1398,15 @@ $('closeBackup').onclick=()=>$('backupPanel').hidden=true;
 
 /* ---------- accounts (Supabase) ---------- */
 const nn=v=>v==null?null:Number(v);
-const toRow=t=>({user_id:uid,trade_date:t.date,symbol:t.sym,side:t.side,lot:t.lot||0,entry:t.entry,sl:t.sl,tp:t.tp,exit_price:t.exit,pnl:t.pnl||0,note:t.note||null,...(t.ticket?{mt5_ticket:String(t.ticket)}:{})});
-const fromRow=r=>({id:r.id,created:r.created_at,date:r.trade_date,sym:r.symbol,side:r.side,lot:Number(r.lot),entry:nn(r.entry),sl:nn(r.sl),tp:nn(r.tp),exit:nn(r.exit_price),pnl:Number(r.pnl),note:r.note||'',ticket:r.mt5_ticket||null});
+const toRow=t=>({user_id:uid,trade_date:t.date,symbol:t.sym,side:t.side,lot:t.lot||0,entry:t.entry,sl:t.sl,tp:t.tp,exit_price:t.exit,pnl:(t.raw!==undefined?t.raw:t.pnl)||0,note:t.note||null,...(t.ticket?{mt5_ticket:String(t.ticket)}:{}),...(noCcy?{}:{ccy:t.ccy||guessCcy(t.sym)})});
+const fromRow=r=>({id:r.id,created:r.created_at,date:r.trade_date,sym:r.symbol,side:r.side,lot:Number(r.lot),entry:nn(r.entry),sl:nn(r.sl),tp:nn(r.tp),exit:nn(r.exit_price),pnl:Number(r.pnl),note:r.note||'',ticket:r.mt5_ticket||null,ccy:r.ccy||null});
+const ccyRetry=async fn=>{try{return await fn()}catch(e){if(!noCcy&&/ccy/i.test((e&&e.message)||'')){noCcy=true;return await fn()}throw e}};
 const db={
   async list(){const {data,error}=await sb.from('trades').select('*').order('trade_date',{ascending:true}).limit(10000);if(error)throw error;return data.map(fromRow)},
-  async add(t){const {data,error}=await sb.from('trades').insert(toRow(t)).select().single();if(error)throw error;return fromRow(data)},
-  async addMany(ts){let out=[];for(let i=0;i<ts.length;i+=500){const {data,error}=await sb.from('trades').insert(ts.slice(i,i+500).map(toRow)).select();if(error)throw error;out=out.concat(data.map(fromRow))}return out},
-  async update(t){const r=toRow(t);delete r.user_id;const {data,error}=await sb.from('trades').update(r).eq('id',t.id).select().single();if(error)throw error;return fromRow(data)},
-  async importMany(ts){let out=[];for(let i=0;i<ts.length;i+=500){const {data,error}=await sb.from('trades').upsert(ts.slice(i,i+500).map(toRow),{onConflict:'user_id,mt5_ticket',ignoreDuplicates:true}).select();if(error)throw error;out=out.concat((data||[]).map(fromRow))}return out},
+  async add(t){return ccyRetry(async()=>{const {data,error}=await sb.from('trades').insert(toRow(t)).select().single();if(error)throw error;return fromRow(data)})},
+  async addMany(ts){return ccyRetry(async()=>{let out=[];for(let i=0;i<ts.length;i+=500){const {data,error}=await sb.from('trades').insert(ts.slice(i,i+500).map(toRow)).select();if(error)throw error;out=out.concat(data.map(fromRow))}return out})},
+  async update(t){return ccyRetry(async()=>{const r=toRow(t);delete r.user_id;const {data,error}=await sb.from('trades').update(r).eq('id',t.id).select().single();if(error)throw error;return fromRow(data)})},
+  async importMany(ts){return ccyRetry(async()=>{let out=[];for(let i=0;i<ts.length;i+=500){const {data,error}=await sb.from('trades').upsert(ts.slice(i,i+500).map(toRow),{onConflict:'user_id,mt5_ticket',ignoreDuplicates:true}).select();if(error)throw error;out=out.concat((data||[]).map(fromRow))}return out})},
   async del(id){const {error}=await sb.from('trades').delete().eq('id',id);if(error)throw error}
 };
 const firstName=n=>(n||'').trim().split(/\s+/)[0];
@@ -1739,7 +1774,7 @@ function parseSpoken(raw){
 }
 function applyVoice(r){
   if(r.date)$('fDate').value=r.date;
-  if(r.sym){$('fSym').value=r.sym;csManual=false;$('fCs').value=contractOf(r.sym);document.querySelector('label[for="fLot"]').textContent=isIndia(r.sym)?'Quantity':'Lot size'}
+  if(r.sym){$('fSym').value=r.sym;csManual=false;$('fCs').value=contractOf(r.sym);if(!ccyManual)$('fCcy').value=guessCcy(r.sym);document.querySelector('label[for="fLot"]').textContent=isIndia(r.sym)?'Quantity':'Lot size'}
   if(r.side){side=r.side;setPick('sidePick',side)}
   ['lot:fLot','entry:fEntry','sl:fSL','tp:fTP'].forEach(p=>{const [k,id]=p.split(':');if(r[k]!=null)$(id).value=r[k]});
   if(r.outcome){outcome=r.outcome;setPick('outPick',outcome)}
@@ -1840,7 +1875,7 @@ function shotFromText(text){
 }
 function applyShot(t){
   if(editingId!=null)endEdit();
-  $('fDate').value=t.date||todayISO;$('fSym').value=t.sym;csManual=false;$('fCs').value=contractOf(t.sym);
+  $('fDate').value=t.date||todayISO;$('fSym').value=t.sym;csManual=false;$('fCs').value=contractOf(t.sym);$('fCcy').value=guessCcy(t.sym);ccyManual=false;
   document.querySelector('label[for="fLot"]').textContent=isIndia(t.sym)?'Quantity':'Lot size';
   if(t.side){side=t.side;setPick('sidePick',side)}
   const v=x=>x==null?'':x;$('fLot').value=v(t.lot);$('fEntry').value=v(t.entry);$('fSL').value=v(t.sl);$('fTP').value=v(t.tp);
@@ -1849,7 +1884,7 @@ function applyShot(t){
   pnlManual=false;calc();
   if(t.pnl!=null){pnlManual=true;$('fPnl').value=t.pnl;$('autoTag').textContent='From screenshot · tap for auto';$('autoTag').classList.add('off');calc()}
 }
-function shotRow(t,i){return `<tr><td><input type="checkbox" data-si="${i}" checked aria-label="Include"></td><td>${fmtDate(t.date)}</td><td><b>${esc(t.sym)}</b></td><td><span class="pill ${t.side==='Buy'?'buy':'sell'}">${t.side||'?'}</span></td><td class="r num">${t.lot??'–'}</td><td class="r num">${t.entry??'–'} → ${t.exit??'–'}</td><td class="r num ${t.pnl>=0?'up':'down'}">${t.pnl!=null?money(t.pnl):'–'}</td></tr>`}
+function shotRow(t,i){return `<tr><td><input type="checkbox" data-si="${i}" checked aria-label="Include"></td><td>${fmtDate(t.date)}</td><td><b>${esc(t.sym)}</b></td><td><span class="pill ${t.side==='Buy'?'buy':'sell'}">${t.side||'?'}</span></td><td class="r num">${t.lot??'–'}</td><td class="r num">${t.entry??'–'} → ${t.exit??'–'}</td><td class="r num ${t.pnl>=0?'up':'down'}">${t.pnl!=null?moneyC(t.pnl,guessCcy(t.sym)):'–'}</td></tr>`}
 async function handleShots(files){
   files=[...files].filter(f=>/^image\//.test(f.type));if(!files.length){toast('Pick a screenshot image');return}
   if($('voiceBox'))$('voiceBox').hidden=true;
@@ -2278,9 +2313,9 @@ async function handleMt5(file){
     const dup=all.length-mt5Parsed.length;
     const net=mt5Parsed.reduce((a,t)=>a+t.pnl,0),wins=mt5Parsed.filter(t=>t.pnl>0).length;
     const ds=all.map(t=>t.date).sort();
-    pv.innerHTML=`<div class="mt5sum"><div><span>New trades</span><b>${mt5Parsed.length}</b></div><div><span>Net P&amp;L</span><b class="${net>=0?'up':'down'}">${money(net)}</b></div><div><span>Win rate</span><b>${mt5Parsed.length?Math.round(wins/mt5Parsed.length*100):0}%</b></div></div>
+    pv.innerHTML=`<div class="mt5sum"><div><span>New trades</span><b>${mt5Parsed.length}</b></div><div><span>Net P&amp;L</span><b class="${net>=0?'up':'down'}">${moneyC(net,'USD')}</b></div><div><span>Win rate</span><b>${mt5Parsed.length?Math.round(wins/mt5Parsed.length*100):0}%</b></div></div>
       <p class="hint" style="margin:8px 0 0">${fmtDate(ds[0])} – ${fmtDate(ds[ds.length-1])} · ${all.length} closed position${all.length===1?'':'s'} in the file${dup?` · ${dup} already in your journal, skipped`:''}</p>
-      ${mt5Parsed.length?`<div class="mt5list"><table><tbody>${mt5Parsed.slice().reverse().slice(0,50).map(t=>`<tr><td>${fmtDate(t.date)}</td><td><b>${esc(t.sym)}</b></td><td><span class="pill ${t.side==='Buy'?'buy':'sell'}">${t.side}</span></td><td class="r num">${t.lot}</td><td class="r num ${t.pnl>=0?'up':'down'}">${money(t.pnl)}</td></tr>`).join('')}</tbody></table></div>`:''}`;
+      ${mt5Parsed.length?`<div class="mt5list"><table><tbody>${mt5Parsed.slice().reverse().slice(0,50).map(t=>`<tr><td>${fmtDate(t.date)}</td><td><b>${esc(t.sym)}</b></td><td><span class="pill ${t.side==='Buy'?'buy':'sell'}">${t.side}</span></td><td class="r num">${t.lot}</td><td class="r num ${t.pnl>=0?'up':'down'}">${moneyC(t.pnl,guessCcy(t.sym))}</td></tr>`).join('')}</tbody></table></div>`:''}`;
     if(mt5Parsed.length){$('mt5Go').hidden=false;$('mt5Go').textContent=`Import ${mt5Parsed.length} trade${mt5Parsed.length===1?'':'s'}`}
     else pv.insertAdjacentHTML('beforeend','<p class="hint" style="color:var(--win)">You are up to date. Every trade in this file is already in your journal.</p>');
   }catch(err){pv.innerHTML=`<p class="mt5err">${esc(err.message||'Could not read this file.')}</p>`}
@@ -2381,6 +2416,7 @@ $('installBtn').onclick=async()=>{
 $('iosClose').onclick=()=>$('iosHint').hidden=true;
 if('serviceWorker' in navigator&&location.protocol==='https:'&&!/claude/.test(location.hostname)){navigator.serviceWorker.register('sw.js').catch(()=>{})}
 
+loadFx();
 boot();
 if(!$('app').hidden)mountNews(false);
 if(!chartsReady())window.addEventListener('load',()=>{if(!$('app').hidden)renderCharts()});
