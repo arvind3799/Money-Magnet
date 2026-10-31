@@ -375,9 +375,9 @@ select.btn{padding-right:10px}
 
 /* big money */
 .bigv{display:grid;gap:16px;min-width:0}
-.bigv>*,#bmCrypto,#bmFx,#bmHm{min-width:0}
-#bmCrypto,#bmFx,#bmHm{display:grid;gap:16px}
-#bmCrypto[hidden],#bmFx[hidden],#bmHm[hidden]{display:none}
+.bigv>*,#bmCrypto,#bmFx{min-width:0}
+#bmCrypto,#bmFx{display:grid;gap:16px}
+#bmCrypto[hidden],#bmFx[hidden]{display:none}
 .bm-head{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
 .bm-head h2{font-size:20px;background:linear-gradient(90deg,var(--gold),var(--magenta));-webkit-background-clip:text;background-clip:text;color:transparent}
 .bm-ctl{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;padding:14px}
@@ -422,20 +422,12 @@ select.btn{padding-right:10px}
 @media (max-width:1100px){.bm-stats{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media (max-width:700px){.bm-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.bm-clusters{grid-template-columns:1fr}.bm-fx-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
-/* currency heatmap */
-.hm-str{display:grid;gap:6px}
-.hm-s{display:grid;grid-template-columns:52px minmax(0,1fr) 64px;gap:10px;align-items:center;font-size:13px}
-.hm-s b{font-family:var(--f-num)}
-.hm-s .bar2{height:14px;border-radius:7px;background:var(--panel2);position:relative;overflow:hidden}
-.hm-s .bar2 i{position:absolute;top:0;bottom:0;border-radius:7px}
-.hm-s .v{text-align:right;font-family:var(--f-num);font-weight:700}
-table.hm{min-width:560px;border-collapse:separate;border-spacing:4px}
-table.hm th{font-size:11px;text-align:center;padding:4px;border:0;color:var(--muted)}
-table.hm th.rh{text-align:left;color:var(--fg)}
-table.hm td{text-align:center;font-family:var(--f-num);font-size:12px;font-weight:700;border-radius:8px;padding:10px 4px;border:0;color:#fff}
-table.hm td.self{background:var(--panel2)!important;color:var(--muted)}
-.hm-metals{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
-.hm-metals span{border-radius:10px;padding:8px 12px;font-family:var(--f-num);font-weight:700;font-size:13px;color:#fff}
+/* price movement heat map */
+table.hmt{min-width:760px;border-collapse:collapse;font-size:13px}
+table.hmt th{font-size:11px;text-align:center;padding:8px 6px;color:var(--muted);border-bottom:1px solid var(--line);white-space:nowrap}
+table.hmt th:first-child,table.hmt td:first-child{text-align:left;position:sticky;left:0;background:var(--panel);z-index:1;font-weight:800;color:var(--fg);font-family:var(--f-body)}
+table.hmt td{text-align:center;font-family:var(--f-num);font-weight:700;padding:9px 6px;border-bottom:1px solid rgba(42,48,97,.5);white-space:nowrap;color:var(--fg)}
+table.hmt tr.metal td:first-child{color:var(--gold)}
 
 /* tabs */
 .tabs{display:flex;gap:6px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:5px;overflow-x:auto}
@@ -757,7 +749,7 @@ footer{color:var(--muted);font-size:12px;text-align:center}
   <section id="bigView" class="bigv" hidden>
     <div class="panel bm-head">
       <div><h2>Big Money</h2><p class="hint" style="margin:4px 0 0">Where the crowd's stops and liquidations sit, the levels big players often target.</p></div>
-      <div class="seg" id="bmSubTabs"><button type="button" data-sub="crypto" aria-pressed="true">Crypto heatmap</button><button type="button" data-sub="fx" aria-pressed="false">Gold &amp; forex</button><button type="button" data-sub="hm" aria-pressed="false">Currency heatmap</button></div>
+      <div class="seg" id="bmSubTabs"><button type="button" data-sub="crypto" aria-pressed="true">Crypto heatmap</button><button type="button" data-sub="fx" aria-pressed="false">Gold &amp; forex</button></div>
     </div>
     <div id="bmCrypto">
       <div class="panel bm-ctl">
@@ -780,15 +772,12 @@ footer{color:var(--muted);font-size:12px;text-align:center}
         <span class="hint" id="bmFxStatus"></span>
       </div>
       <div class="panel" id="bmFxBody"><p class="tv-note">Loading…</p></div>
-    </div>
-    <div id="bmHm" hidden>
-      <div class="panel bm-ctl">
-        <div class="f"><label>Timeframe</label><div class="seg wrap-seg" id="hmTf"><button type="button" data-t="1m">1m</button><button type="button" data-t="5m">5m</button><button type="button" data-t="15m">15m</button><button type="button" data-t="1h">1H</button><button type="button" data-t="4h">4H</button><button type="button" data-t="1d" aria-pressed="true">Day</button><button type="button" data-t="1w">Week</button><button type="button" data-t="1M">Month</button></div></div>
-        <span class="hint" id="hmStatus"></span>
+      <div class="panel">
+        <div class="ph"><h2>Price movement heat map</h2><div class="seg" id="hmUnit"><button type="button" data-u="pips" aria-pressed="true">Pips</button><button type="button" data-u="pct" aria-pressed="false">%</button></div></div>
+        <p class="hint" id="hmStatus" style="margin:0 0 10px"></p>
+        <div class="tbl"><table class="hmt" id="hmTable"><tbody><tr><td>Loading…</td></tr></tbody></table></div>
+        <p class="hint" style="margin:10px 0 0">How far each pair has moved in the current candle of each timeframe. Green = up, red = down, stronger colour = bigger move. Gold and silver are in points (0.01).</p>
       </div>
-      <div class="panel"><div class="ph"><h2>Currency strength</h2><span class="hint" id="hmTfLabel"></span></div><div class="hm-str" id="hmStr"></div></div>
-      <div class="panel"><div class="ph"><h2>Heat map</h2><span class="hint">Row currency vs column currency</span></div><div class="tbl"><table class="hm" id="hmTable"></table></div><div class="hm-metals" id="hmMetals"></div>
-        <p class="hint" style="margin:8px 0 0">Each box is the % change of the row currency against the column currency over the chosen timeframe. Green = row currency got stronger. For example, the EUR row and USD column is EURUSD.</p></div>
     </div>
     <p class="hint bm-foot">Estimates from public market data. Not financial advice. Always use your own stop loss.</p>
   </section>
@@ -2624,46 +2613,44 @@ function bmRenderFx(){
     ${list.sort((a,b)=>Math.abs(b.lp-50)-Math.abs(a.lp-50)).map(r=>{const d2=r.al>=100?2:r.al>=10?3:5;return `<tr data-fx="${esc(r.name)}" class="${r.name===s.name?'sel':''}"><td><b>${esc(r.name)}</b></td><td><div class="bm-mini"><i style="width:${r.lp}%"></i></div><small>${r.lp.toFixed(0)}% L · ${r.sp.toFixed(0)}% S</small></td><td class="r num">${(r.lpos+r.spos).toLocaleString()}</td><td class="r num">${r.al?r.al.toFixed(d2):'–'}</td><td class="r num">${r.as?r.as.toFixed(d2):'–'}</td></tr>`}).join('')}
     </tbody></table></div>`;
 }
-/* currency heatmap (Myfxbook-style), data via big-money relay */
-let hmData=null,hmTf=(store.get('mm_hm_tf','1d')),hmBusy=false;
-const HM_LABEL={'1m':'last 1 minute','5m':'last 5 minutes','15m':'last 15 minutes','1h':'last hour','4h':'last 4 hours','1d':'last 24 hours','1w':'last 7 days','1M':'last 30 days'};
-function hmCell(v){if(v==null)return 'background:var(--panel2);color:var(--muted)';const a=Math.min(1,Math.abs(v)/({'1m':.05,'5m':.1,'15m':.15,'1h':.25,'4h':.5,'1d':.8,'1w':1.5,'1M':3}[hmTf]||1));const al=(.18+.75*a).toFixed(2);return v>=0?`background:rgba(34,190,120,${al})`:`background:rgba(232,72,92,${al})`}
+/* price movement heat map (Myfxbook-style), data via big-money relay */
+let hmData=null,hmUnit=store.get('mm_hm_unit','pips'),hmBusy=false;
+const HM_COLS=[['1m','1 minute'],['5m','5 minutes'],['15m','15 minutes'],['30m','30 minutes'],['1h','1 hour'],['4h','4 hours'],['1d','Daily'],['1w','Weekly'],['1M','Monthly']];
 async function hmLoad(force){
   if(hmBusy)return;if(!force&&hmData&&Date.now()-hmData._t<60e3){hmRender();return}
-  hmBusy=true;$('hmStatus').textContent='Loading live prices…';
-  try{if(!CLOUD||!sb)throw new Error('Sign in to see the heatmap');
+  hmBusy=true;
+  try{if(!CLOUD||!sb)throw new Error('Sign in to see the heat map');
     const {data,error}=await sb.functions.invoke('big-money',{body:{src:'heatmap'}});
     if(error){let m=error.message;try{const b=await error.context.json();if(b&&b.error)m=b.error}catch(_){}throw new Error(m)}
-    if(!data||data.error)throw new Error((data&&data.error)||'no data');hmData=Object.assign(data,{_t:Date.now()});hmRender();
-  }catch(e){$('hmStatus').textContent='';$('hmTable').innerHTML=`<tr><td style="background:none;color:var(--muted);font-family:var(--f-body)">Could not load the heatmap. Reason: ${esc(e.message||'')}</td></tr>`}
+    if(!data||!data.rows)throw new Error((data&&data.error)||'no data');hmData=Object.assign(data,{_t:Date.now()});hmRender();
+  }catch(e){$('hmStatus').textContent='';$('hmTable').innerHTML=`<tbody><tr><td style="position:static;font-weight:500;color:var(--muted)">Could not load the heat map. Reason: ${esc(e.message||'')}</td></tr></tbody>`}
   finally{hmBusy=false}
 }
-function hmPair(a,b){const p=hmData.pairs;if(p[a+b])return p[a+b][hmTf];if(p[b+a]){const v=p[b+a][hmTf];return v==null?null:-v}return null}
 function hmRender(){
-  if(!hmData)return;$('hmTf').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.t===hmTf));
-  const C=hmData.currencies,fmt=v=>v==null?'–':(v>=0?'+':'')+v.toFixed(Math.abs(v)<.1?3:2)+'%';
+  if(!hmData)return;$('hmUnit').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.u===hmUnit));
+  const R=hmData.rows,names=Object.keys(R).filter(n=>!n.startsWith('XA')).sort().concat(Object.keys(R).filter(n=>n.startsWith('XA')).sort());
   const stale=Date.now()-hmData.asOf>2*3600e3;
-  $('hmStatus').textContent=(stale?'Market closed · showing the last moves before close · ':'Live · ')+'prices at '+new Date(hmData.asOf).toLocaleString(undefined,{weekday:'short',hour:'2-digit',minute:'2-digit'});
-  $('hmTfLabel').textContent='Change over the '+HM_LABEL[hmTf];
-  const str=C.map(a=>{const vals=C.filter(b=>b!==a).map(b=>hmPair(a,b)).filter(v=>v!=null);return {c:a,v:vals.length?vals.reduce((x,y)=>x+y,0)/vals.length:0}}).sort((x,y)=>y.v-x.v);
-  const mx=Math.max(...str.map(x=>Math.abs(x.v)),1e-9);
-  $('hmStr').innerHTML=str.map(x=>{const w=Math.abs(x.v)/mx*50;return `<div class="hm-s"><b>${x.c}</b><div class="bar2"><i style="${x.v>=0?`left:50%;width:${w}%;background:var(--win)`:`right:50%;width:${w}%;background:var(--loss)`}"></i></div><span class="v ${x.v>=0?'up':'down'}">${fmt(x.v)}</span></div>`}).join('');
-  let h='<tr><th></th>'+C.map(c=>`<th>${c}</th>`).join('')+'</tr>';
-  C.forEach(a=>{h+=`<tr><th class="rh">${a}</th>`+C.map(b=>{if(a===b)return '<td class="self">–</td>';const v=hmPair(a,b);return `<td style="${hmCell(v)}" title="${a}${b}: ${fmt(v)}">${fmt(v)}</td>`}).join('')+'</tr>'});
-  $('hmTable').innerHTML=h;
-  const M=hmData.metals||{};$('hmMetals').innerHTML=Object.entries(M).map(([n,v])=>`<span style="${hmCell(v[hmTf])}">${n==='XAUUSD'?'Gold':'Silver'} ${fmt(v[hmTf])}</span>`).join('');
+  $('hmStatus').textContent=(stale?'Market closed · showing the last candles before close · ':'Live · updates every minute · ')+'prices at '+new Date(hmData.asOf).toLocaleString(undefined,{weekday:'short',hour:'2-digit',minute:'2-digit'});
+  const val=(n,t)=>{const r=R[n][hmUnit];return r?r[t]:null};
+  const colMax={};HM_COLS.forEach(([t])=>{colMax[t]=Math.max(1e-9,...names.filter(n=>!n.startsWith('XA')).map(n=>Math.abs(val(n,t)||0)))});
+  const metalMax={};HM_COLS.forEach(([t])=>{metalMax[t]=Math.max(1e-9,...names.filter(n=>n.startsWith('XA')).map(n=>Math.abs(val(n,t)||0)))});
+  const fmt=(v,n)=>{if(v==null)return '–';if(hmUnit==='pct')return (v>=0?'+':'')+v.toFixed(Math.abs(v)<.1?3:2)+'%';const d=n==='XAGUSD'?2:1;return v.toLocaleString(undefined,{minimumFractionDigits:d,maximumFractionDigits:d})};
+  const bg=(v,mx)=>{if(v==null||v===0)return '';const a=(.10+.55*Math.min(1,Math.abs(v)/mx)).toFixed(2);return v>0?`background:rgba(47,227,154,${a})`:`background:rgba(255,93,108,${a})`};
+  let h='<thead><tr><th>Pair</th>'+HM_COLS.map(([,l])=>`<th>${l}</th>`).join('')+'</tr></thead><tbody>';
+  names.forEach(n=>{const metal=n.startsWith('XA');h+=`<tr class="${metal?'metal':''}"><td>${n}</td>`+HM_COLS.map(([t])=>{const v=val(n,t);return `<td style="${bg(v,metal?metalMax[t]:colMax[t])}">${fmt(v,n)}</td>`}).join('')+'</tr>'});
+  $('hmTable').innerHTML=h+'</tbody>';
 }
-$('hmTf').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;hmTf=b.dataset.t;store.set('mm_hm_tf',hmTf);hmRender()});
-setInterval(()=>{if(view==='big'&&bmState.sub==='hm'&&!document.hidden)hmLoad(true)},60e3);
+$('hmUnit').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;hmUnit=b.dataset.u;store.set('mm_hm_unit',hmUnit);hmRender()});
+setInterval(()=>{if(view==='big'&&bmState.sub==='fx'&&!document.hidden)hmLoad(true)},60e3);
 function bmRender(){
   $('bmSubTabs').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.sub===bmState.sub));
-  $('bmCrypto').hidden=bmState.sub!=='crypto';$('bmFx').hidden=bmState.sub!=='fx';$('bmHm').hidden=bmState.sub!=='hm';
-  if(bmState.sub==='hm'){hmLoad(false);return}
+  if(bmState.sub==='hm')bmState.sub='fx';
+  $('bmCrypto').hidden=bmState.sub!=='crypto';$('bmFx').hidden=bmState.sub!=='fx';
   if(bmState.sub==='crypto'){
     $('bmSym').innerHTML=BM_CRYPTO.map(([n,s])=>`<option value="${s}" ${s===bmState.sym?'selected':''}>${n}</option>`).join('');
     $('bmTf').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.tf===bmState.tf));
     if(!bmData||bmData.sym!==bmState.sym||bmData.tf!==bmState.tf||Date.now()-bmData.t>5*60e3)bmLoadCrypto();else bmRenderCrypto();
-  }else bmLoadFx(false);
+  }else{bmLoadFx(false);hmLoad(false)}
 }
 $('bmSubTabs').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;bmState.sub=b.dataset.sub;bmSave();bmRender()});
 $('bmSym').addEventListener('change',e=>{bmState.sym=e.target.value;bmSave();bmData=null;bmRender()});
