@@ -375,6 +375,9 @@ select.btn{padding-right:10px}
 
 /* big money */
 .bigv{display:grid;gap:16px;min-width:0}
+.bigv>*,#bmCrypto,#bmFx,#bmHm{min-width:0}
+#bmCrypto,#bmFx,#bmHm{display:grid;gap:16px}
+#bmCrypto[hidden],#bmFx[hidden],#bmHm[hidden]{display:none}
 .bm-head{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
 .bm-head h2{font-size:20px;background:linear-gradient(90deg,var(--gold),var(--magenta));-webkit-background-clip:text;background-clip:text;color:transparent}
 .bm-ctl{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;padding:14px}
@@ -418,6 +421,21 @@ select.btn{padding-right:10px}
 .bm-foot{text-align:center;margin:0}
 @media (max-width:1100px){.bm-stats{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media (max-width:700px){.bm-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.bm-clusters{grid-template-columns:1fr}.bm-fx-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* currency heatmap */
+.hm-str{display:grid;gap:6px}
+.hm-s{display:grid;grid-template-columns:52px minmax(0,1fr) 64px;gap:10px;align-items:center;font-size:13px}
+.hm-s b{font-family:var(--f-num)}
+.hm-s .bar2{height:14px;border-radius:7px;background:var(--panel2);position:relative;overflow:hidden}
+.hm-s .bar2 i{position:absolute;top:0;bottom:0;border-radius:7px}
+.hm-s .v{text-align:right;font-family:var(--f-num);font-weight:700}
+table.hm{min-width:560px;border-collapse:separate;border-spacing:4px}
+table.hm th{font-size:11px;text-align:center;padding:4px;border:0;color:var(--muted)}
+table.hm th.rh{text-align:left;color:var(--fg)}
+table.hm td{text-align:center;font-family:var(--f-num);font-size:12px;font-weight:700;border-radius:8px;padding:10px 4px;border:0;color:#fff}
+table.hm td.self{background:var(--panel2)!important;color:var(--muted)}
+.hm-metals{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.hm-metals span{border-radius:10px;padding:8px 12px;font-family:var(--f-num);font-weight:700;font-size:13px;color:#fff}
 
 /* tabs */
 .tabs{display:flex;gap:6px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:5px;overflow-x:auto}
@@ -739,7 +757,7 @@ footer{color:var(--muted);font-size:12px;text-align:center}
   <section id="bigView" class="bigv" hidden>
     <div class="panel bm-head">
       <div><h2>Big Money</h2><p class="hint" style="margin:4px 0 0">Where the crowd's stops and liquidations sit, the levels big players often target.</p></div>
-      <div class="seg" id="bmSubTabs"><button type="button" data-sub="crypto" aria-pressed="true">Crypto heatmap</button><button type="button" data-sub="fx" aria-pressed="false">Gold &amp; forex</button></div>
+      <div class="seg" id="bmSubTabs"><button type="button" data-sub="crypto" aria-pressed="true">Crypto heatmap</button><button type="button" data-sub="fx" aria-pressed="false">Gold &amp; forex</button><button type="button" data-sub="hm" aria-pressed="false">Currency heatmap</button></div>
     </div>
     <div id="bmCrypto">
       <div class="panel bm-ctl">
@@ -752,7 +770,7 @@ footer{color:var(--muted);font-size:12px;text-align:center}
       <div class="panel bm-heat">
         <div class="ph"><h2>Estimated liquidation heatmap</h2><div class="bm-legend"><span>Less</span><i></i><span>More liquidity</span></div></div>
         <div class="bm-heat-wrap" id="bmHeatWrap"><p class="tv-note" style="padding:20px">Loading…</p></div>
-        <p class="hint" style="margin:8px 0 0">Bright bands are price levels where many leveraged traders would be liquidated. The right-hand bars show what is still open now: <b style="color:var(--loss)">red above</b> = shorts' stops, <b style="color:var(--win)">green below</b> = longs' stops. Built from Binance open interest and positioning, spread across 10x–100x leverage. It is an estimate, like every liquidation heatmap.</p>
+        <p class="hint" style="margin:8px 0 0">Bright bands are price levels where many leveraged traders would be liquidated. The right-hand bars show what is still open now: <b style="color:var(--loss)">red above</b> = shorts' stops, <b style="color:var(--win)">green below</b> = longs' stops. Built from Binance (or OKX) open interest and positioning, spread across 10x–100x leverage. It is an estimate, like every liquidation heatmap.</p>
       </div>
       <div class="bm-clusters" id="bmClusters"></div>
     </div>
@@ -762,6 +780,15 @@ footer{color:var(--muted);font-size:12px;text-align:center}
         <span class="hint" id="bmFxStatus"></span>
       </div>
       <div class="panel" id="bmFxBody"><p class="tv-note">Loading…</p></div>
+    </div>
+    <div id="bmHm" hidden>
+      <div class="panel bm-ctl">
+        <div class="f"><label>Timeframe</label><div class="seg wrap-seg" id="hmTf"><button type="button" data-t="1m">1m</button><button type="button" data-t="5m">5m</button><button type="button" data-t="15m">15m</button><button type="button" data-t="1h">1H</button><button type="button" data-t="4h">4H</button><button type="button" data-t="1d" aria-pressed="true">Day</button><button type="button" data-t="1w">Week</button><button type="button" data-t="1M">Month</button></div></div>
+        <span class="hint" id="hmStatus"></span>
+      </div>
+      <div class="panel"><div class="ph"><h2>Currency strength</h2><span class="hint" id="hmTfLabel"></span></div><div class="hm-str" id="hmStr"></div></div>
+      <div class="panel"><div class="ph"><h2>Heat map</h2><span class="hint">Row currency vs column currency</span></div><div class="tbl"><table class="hm" id="hmTable"></table></div><div class="hm-metals" id="hmMetals"></div>
+        <p class="hint" style="margin:8px 0 0">Each box is the % change of the row currency against the column currency over the chosen timeframe. Green = row currency got stronger. For example, the EUR row and USD column is EURUSD.</p></div>
     </div>
     <p class="hint bm-foot">Estimates from public market data. Not financial advice. Always use your own stop loss.</p>
   </section>
@@ -2445,27 +2472,36 @@ const usdShort=v=>{const a=Math.abs(v);return (v<0?'-':'')+'$'+(a>=1e9?(a/1e9).t
 const pxFmt=v=>{const d=v>=1000?1:v>=10?2:v>=1?4:v>=0.01?5:7;return '$'+v.toLocaleString(undefined,{minimumFractionDigits:d,maximumFractionDigits:d})};
 async function bnGet(path,params){
   const qs=new URLSearchParams(params).toString();
-  let why='';
-  try{const ctl=new AbortController();const to=setTimeout(()=>ctl.abort(),8000);const r=await fetch('https://fapi.binance.com'+path+'?'+qs,{signal:ctl.signal});clearTimeout(to);if(r.ok)return await r.json();why='Binance replied '+r.status}catch(e){why='Binance is blocked or unreachable on this network'}
-  if(CLOUD&&sb){try{const {data,error}=await sb.functions.invoke('big-money',{body:{src:'binance',path,params}});if(!error&&Array.isArray(data)||(data&&!data.error&&data.markPrice))return data;why+='; relay: '+(error?(error.message||'not deployed'):(data&&data.error)||'no data')}catch(e){why+='; relay failed'}}
-  throw new Error(why);
+  const ctl=new AbortController();const to=setTimeout(()=>ctl.abort(),8000);
+  try{const r=await fetch('https://fapi.binance.com'+path+'?'+qs,{signal:ctl.signal});if(!r.ok)throw new Error('Binance replied '+r.status);return await r.json()}
+  catch(e){throw new Error(e.name==='AbortError'?'Binance timed out':e.message.startsWith('Binance')?e.message:'Binance is blocked on this network')}
+  finally{clearTimeout(to)}
+}
+async function okxBundle(sym,interval,n){
+  if(!CLOUD||!sb)throw new Error('backup source needs the app online');
+  const {data,error}=await sb.functions.invoke('big-money',{body:{src:'okx',sym,interval,n}});
+  if(error){let m=error.message;try{const b=await error.context.json();if(b&&b.error)m=b.error}catch(_){}throw new Error('Backup (OKX): '+m)}
+  if(!data||data.error)throw new Error('Backup (OKX): '+((data&&data.error)||'no data'));
+  return data;
 }
 function bmSave(){store.set('mm_bm',bmState)}
 async function bmLoadCrypto(){
   if(bmBusy)return;bmBusy=true;const sym=bmState.sym,tf=BM_TF[bmState.tf];
   $('bmStatus').textContent='Loading live data from Binance…';
   try{
-    const per=tf.k;
-    const [kl,oi,gl,tp,tk,pi]=await Promise.all([
+    const per=tf.k;let kl,oi,gl,tp,tk,pi,src='Binance';
+    try{[kl,oi,gl,tp,tk,pi]=await Promise.all([
       bnGet('/fapi/v1/klines',{symbol:sym,interval:per,limit:tf.n}),
       bnGet('/futures/data/openInterestHist',{symbol:sym,period:per,limit:Math.min(500,tf.n)}),
       bnGet('/futures/data/globalLongShortAccountRatio',{symbol:sym,period:per,limit:Math.min(500,tf.n)}),
       bnGet('/futures/data/topLongShortPositionRatio',{symbol:sym,period:per,limit:Math.min(500,tf.n)}),
       bnGet('/futures/data/takerlongshortRatio',{symbol:sym,period:per,limit:Math.min(500,tf.n)}),
-      bnGet('/fapi/v1/premiumIndex',{symbol:sym})]);
+      bnGet('/fapi/v1/premiumIndex',{symbol:sym})])}
+    catch(e1){$('bmStatus').textContent='Binance is blocked here, loading from OKX…';
+      try{const d=await okxBundle(sym,per,tf.n);({kl,oi,gl,tp,tk,pi}=d);src='OKX'}catch(e2){throw new Error(e1.message+'; '+e2.message)}}
     if(sym!==bmState.sym)return;
     bmData={sym,tf:bmState.tf,kl,oi,gl,tp,tk,pi,t:Date.now(),model:bmModel(kl,oi,gl)};
-    $('bmStatus').textContent='Updated '+new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})+' · refreshes every 5 minutes';
+    $('bmStatus').textContent='Data: '+src+(src==='OKX'?' (Binance is blocked on this network)':'')+' · updated '+new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})+' · refreshes every 5 minutes';
     bmRenderCrypto();
   }catch(e){bmData=null;$('bmStatus').textContent='';$('bmStats').innerHTML='';$('bmClusters').innerHTML='';
     $('bmHeatWrap').innerHTML='<p class="ff-msg" style="padding:20px">Could not load Binance data on this device. <br><small style="opacity:.75">Reason: '+esc(e.message||'unknown')+'</small></p>'}
@@ -2588,9 +2624,41 @@ function bmRenderFx(){
     ${list.sort((a,b)=>Math.abs(b.lp-50)-Math.abs(a.lp-50)).map(r=>{const d2=r.al>=100?2:r.al>=10?3:5;return `<tr data-fx="${esc(r.name)}" class="${r.name===s.name?'sel':''}"><td><b>${esc(r.name)}</b></td><td><div class="bm-mini"><i style="width:${r.lp}%"></i></div><small>${r.lp.toFixed(0)}% L · ${r.sp.toFixed(0)}% S</small></td><td class="r num">${(r.lpos+r.spos).toLocaleString()}</td><td class="r num">${r.al?r.al.toFixed(d2):'–'}</td><td class="r num">${r.as?r.as.toFixed(d2):'–'}</td></tr>`}).join('')}
     </tbody></table></div>`;
 }
+/* currency heatmap (Myfxbook-style), data via big-money relay */
+let hmData=null,hmTf=(store.get('mm_hm_tf','1d')),hmBusy=false;
+const HM_LABEL={'1m':'last 1 minute','5m':'last 5 minutes','15m':'last 15 minutes','1h':'last hour','4h':'last 4 hours','1d':'last 24 hours','1w':'last 7 days','1M':'last 30 days'};
+function hmCell(v){if(v==null)return 'background:var(--panel2);color:var(--muted)';const a=Math.min(1,Math.abs(v)/({'1m':.05,'5m':.1,'15m':.15,'1h':.25,'4h':.5,'1d':.8,'1w':1.5,'1M':3}[hmTf]||1));const al=(.18+.75*a).toFixed(2);return v>=0?`background:rgba(34,190,120,${al})`:`background:rgba(232,72,92,${al})`}
+async function hmLoad(force){
+  if(hmBusy)return;if(!force&&hmData&&Date.now()-hmData._t<60e3){hmRender();return}
+  hmBusy=true;$('hmStatus').textContent='Loading live prices…';
+  try{if(!CLOUD||!sb)throw new Error('Sign in to see the heatmap');
+    const {data,error}=await sb.functions.invoke('big-money',{body:{src:'heatmap'}});
+    if(error){let m=error.message;try{const b=await error.context.json();if(b&&b.error)m=b.error}catch(_){}throw new Error(m)}
+    if(!data||data.error)throw new Error((data&&data.error)||'no data');hmData=Object.assign(data,{_t:Date.now()});hmRender();
+  }catch(e){$('hmStatus').textContent='';$('hmTable').innerHTML=`<tr><td style="background:none;color:var(--muted);font-family:var(--f-body)">Could not load the heatmap. Reason: ${esc(e.message||'')}</td></tr>`}
+  finally{hmBusy=false}
+}
+function hmPair(a,b){const p=hmData.pairs;if(p[a+b])return p[a+b][hmTf];if(p[b+a]){const v=p[b+a][hmTf];return v==null?null:-v}return null}
+function hmRender(){
+  if(!hmData)return;$('hmTf').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.t===hmTf));
+  const C=hmData.currencies,fmt=v=>v==null?'–':(v>=0?'+':'')+v.toFixed(Math.abs(v)<.1?3:2)+'%';
+  const stale=Date.now()-hmData.asOf>2*3600e3;
+  $('hmStatus').textContent=(stale?'Market closed · showing the last moves before close · ':'Live · ')+'prices at '+new Date(hmData.asOf).toLocaleString(undefined,{weekday:'short',hour:'2-digit',minute:'2-digit'});
+  $('hmTfLabel').textContent='Change over the '+HM_LABEL[hmTf];
+  const str=C.map(a=>{const vals=C.filter(b=>b!==a).map(b=>hmPair(a,b)).filter(v=>v!=null);return {c:a,v:vals.length?vals.reduce((x,y)=>x+y,0)/vals.length:0}}).sort((x,y)=>y.v-x.v);
+  const mx=Math.max(...str.map(x=>Math.abs(x.v)),1e-9);
+  $('hmStr').innerHTML=str.map(x=>{const w=Math.abs(x.v)/mx*50;return `<div class="hm-s"><b>${x.c}</b><div class="bar2"><i style="${x.v>=0?`left:50%;width:${w}%;background:var(--win)`:`right:50%;width:${w}%;background:var(--loss)`}"></i></div><span class="v ${x.v>=0?'up':'down'}">${fmt(x.v)}</span></div>`}).join('');
+  let h='<tr><th></th>'+C.map(c=>`<th>${c}</th>`).join('')+'</tr>';
+  C.forEach(a=>{h+=`<tr><th class="rh">${a}</th>`+C.map(b=>{if(a===b)return '<td class="self">–</td>';const v=hmPair(a,b);return `<td style="${hmCell(v)}" title="${a}${b}: ${fmt(v)}">${fmt(v)}</td>`}).join('')+'</tr>'});
+  $('hmTable').innerHTML=h;
+  const M=hmData.metals||{};$('hmMetals').innerHTML=Object.entries(M).map(([n,v])=>`<span style="${hmCell(v[hmTf])}">${n==='XAUUSD'?'Gold':'Silver'} ${fmt(v[hmTf])}</span>`).join('');
+}
+$('hmTf').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;hmTf=b.dataset.t;store.set('mm_hm_tf',hmTf);hmRender()});
+setInterval(()=>{if(view==='big'&&bmState.sub==='hm'&&!document.hidden)hmLoad(true)},60e3);
 function bmRender(){
   $('bmSubTabs').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.sub===bmState.sub));
-  $('bmCrypto').hidden=bmState.sub!=='crypto';$('bmFx').hidden=bmState.sub!=='fx';
+  $('bmCrypto').hidden=bmState.sub!=='crypto';$('bmFx').hidden=bmState.sub!=='fx';$('bmHm').hidden=bmState.sub!=='hm';
+  if(bmState.sub==='hm'){hmLoad(false);return}
   if(bmState.sub==='crypto'){
     $('bmSym').innerHTML=BM_CRYPTO.map(([n,s])=>`<option value="${s}" ${s===bmState.sym?'selected':''}>${n}</option>`).join('');
     $('bmTf').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.tf===bmState.tf));
