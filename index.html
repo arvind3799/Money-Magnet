@@ -2557,7 +2557,7 @@ async function bmLoadFx(force){
   $('bmFxStatus').textContent='Loading crowd positions…';
   try{if(!CLOUD||!sb)throw new Error('signin');
     const {data,error}=await sb.functions.invoke('big-money',{body:{src:'myfxbook'}});
-    if(error){let msg=error.message||'error';try{const b=await error.context.json();if(b&&b.error)msg=b.error}catch(_){}throw new Error(msg)}if(!data||data.error)throw new Error(data&&data.error||'empty');
+    if(error){let msg=error.message||'error';try{const r=error.context;const st=r&&r.status;let t='';try{t=await r.text()}catch(_){}let b={};try{b=JSON.parse(t)}catch(_){}const m=b.error||b.message||b.msg||b.code||t.slice(0,120);msg=(st?'HTTP '+st+': ':'')+(m||msg)+(st===404?' (function not found: check it is deployed and named big-money)':st===401?' (turn off Verify JWT in the function settings)':'')}catch(_){}throw new Error(msg)}if(!data||data.error)throw new Error(data&&data.error||'empty');
     bmFx=data;bmFxErr='';store.set('mm_bm_fx',{t:Date.now(),data});
   }catch(e){bmFxErr=String(e.message||e)}
   bmRenderFx();
