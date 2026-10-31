@@ -2445,9 +2445,10 @@ const usdShort=v=>{const a=Math.abs(v);return (v<0?'-':'')+'$'+(a>=1e9?(a/1e9).t
 const pxFmt=v=>{const d=v>=1000?1:v>=10?2:v>=1?4:v>=0.01?5:7;return '$'+v.toLocaleString(undefined,{minimumFractionDigits:d,maximumFractionDigits:d})};
 async function bnGet(path,params){
   const qs=new URLSearchParams(params).toString();
-  try{const ctl=new AbortController();const to=setTimeout(()=>ctl.abort(),8000);const r=await fetch('https://fapi.binance.com'+path+'?'+qs,{signal:ctl.signal});clearTimeout(to);if(r.ok)return await r.json()}catch(e){}
-  if(CLOUD&&sb){const {data,error}=await sb.functions.invoke('big-money',{body:{src:'binance',path,params}});if(!error&&data&&!data.error)return data}
-  throw new Error('binance');
+  let why='';
+  try{const ctl=new AbortController();const to=setTimeout(()=>ctl.abort(),8000);const r=await fetch('https://fapi.binance.com'+path+'?'+qs,{signal:ctl.signal});clearTimeout(to);if(r.ok)return await r.json();why='Binance replied '+r.status}catch(e){why='Binance is blocked or unreachable on this network'}
+  if(CLOUD&&sb){try{const {data,error}=await sb.functions.invoke('big-money',{body:{src:'binance',path,params}});if(!error&&Array.isArray(data)||(data&&!data.error&&data.markPrice))return data;why+='; relay: '+(error?(error.message||'not deployed'):(data&&data.error)||'no data')}catch(e){why+='; relay failed'}}
+  throw new Error(why);
 }
 function bmSave(){store.set('mm_bm',bmState)}
 async function bmLoadCrypto(){
@@ -2467,7 +2468,7 @@ async function bmLoadCrypto(){
     $('bmStatus').textContent='Updated '+new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})+' · refreshes every 5 minutes';
     bmRenderCrypto();
   }catch(e){bmData=null;$('bmStatus').textContent='';$('bmStats').innerHTML='';$('bmClusters').innerHTML='';
-    $('bmHeatWrap').innerHTML='<p class="ff-msg" style="padding:20px">Could not reach Binance. Check your internet, or finish the one-time <b>big-money</b> setup in Supabase so the app can fetch it for you.</p>'}
+    $('bmHeatWrap').innerHTML='<p class="ff-msg" style="padding:20px">Could not load Binance data on this device. <br><small style="opacity:.75">Reason: '+esc(e.message||'unknown')+'</small></p>'}
   finally{bmBusy=false}
 }
 // Estimated liquidation model: new open interest is assumed to open at each bar's typical price,
@@ -2556,14 +2557,14 @@ async function bmLoadFx(force){
   $('bmFxStatus').textContent='Loading crowd positions…';
   try{if(!CLOUD||!sb)throw new Error('signin');
     const {data,error}=await sb.functions.invoke('big-money',{body:{src:'myfxbook'}});
-    if(error)throw error;if(!data||data.error)throw new Error(data&&data.error||'empty');
+    if(error){let msg=error.message||'error';try{const b=await error.context.json();if(b&&b.error)msg=b.error}catch(_){}throw new Error(msg)}if(!data||data.error)throw new Error(data&&data.error||'empty');
     bmFx=data;bmFxErr='';store.set('mm_bm_fx',{t:Date.now(),data});
   }catch(e){bmFxErr=String(e.message||e)}
   bmRenderFx();
 }
 function bmRenderFx(){
   const box=$('bmFxBody');
-  if(bmFxErr&&!bmFx){$('bmFxStatus').textContent='';box.innerHTML=`<div class="ff-msg" style="padding:6px 2px">${/signin/.test(bmFxErr)?'Sign in to see crowd positions.':/credentials|login|MYFXBOOK/i.test(bmFxErr)?'Almost there: add your free Myfxbook email and password as secrets in Supabase (see the setup steps), then refresh.':'Crowd positions need a one-time setup: deploy the <b>big-money</b> function in Supabase and add your Myfxbook login as secrets.'}</div>`;return}
+  if(bmFxErr&&!bmFx){$('bmFxStatus').textContent='';box.innerHTML=`<div class="ff-msg" style="padding:6px 2px">${/signin/.test(bmFxErr)?'Sign in to see crowd positions.':/credentials|login|MYFXBOOK/i.test(bmFxErr)?'Almost there: add your free Myfxbook email and password as secrets in Supabase (see the setup steps), then refresh.':'Crowd positions need a one-time setup: deploy the <b>big-money</b> function in Supabase and add your Myfxbook login as secrets.'}<br><small style="opacity:.75">Reason: ${esc(bmFxErr)}</small></div>`;return}
   if(!bmFx){box.innerHTML='<p class="tv-note">Loading…</p>';return}
   const list=(bmFx.symbols||[]).map(s=>({name:String(s.name).toUpperCase(),lp:+s.longPercentage,sp:+s.shortPercentage,lpos:+s.longPositions,spos:+s.shortPositions,lv:+s.longVolume,sv:+s.shortVolume,al:+s.avgLongPrice,as:+s.avgShortPrice}));
   if(!list.length){box.innerHTML='<p class="ff-msg">No data right now. Try again in a few minutes.</p>';return}
